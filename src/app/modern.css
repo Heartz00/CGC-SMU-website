@@ -738,3 +738,91 @@ em {
   line-height: 1.65;
   margin: 0 0 24px;
 }
+.hero.has-moving-molecule .hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+  align-items: center;
+  gap: 40px;
+}
+.has-moving-molecule .hero-copy {
+  text-align: left;
+}
+.has-moving-molecule .hero-description {
+  margin-inline: 0;
+}
+.has-moving-molecule .hero-actions {
+  justify-content: flex-start;
+}
+.hero.has-moving-molecule .hero-art {
+  position: relative;
+  inset: auto;
+  width: 100%;
+  margin: 0;
+  opacity: 1;
+  pointer-events: auto;
+}
+.animated-molecule {
+  text-align: center;
+}
+.molecule-motion-toggle {
+  background: #ffffff14;
+  color: #fff;
+  border: 1px solid #ffffff66;
+  border-radius: 8px;
+  padding: 10px 16px;
+  min-height: 44px;
+  cursor: pointer;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .animated-molecule .molecule-core {
+    transform-origin: 50% 50%;
+    transform-box: view-box;
+    animation: molecule-drift 6s ease-in-out infinite;
+  }
+  .animated-molecule .molecule-orbit {
+    animation: molecule-orbit 12s linear infinite;
+  }
+  .animated-molecule.is-paused .molecule-core,
+  .animated-molecule.is-paused .molecule-orbit {
+    animation-play-state: paused;
+  }
+  @keyframes molecule-drift {
+    0%,
+    100% {
+      transform: translateY(8px) rotate(-5deg);
+    }
+    50% {
+      transform: translateY(-12px) rotate(5deg);
+    }
+  }
+  @keyframes molecule-orbit {
+    to {
+      stroke-dashoffset: -220;
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .molecule-motion-toggle {
+    display: none;
+  }
+}
+@media (max-width: 900px) {
+  .hero.has-moving-molecule .hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .has-moving-molecule .hero-copy {
+    text-align: center;
+  }
+  .has-moving-molecule .hero-description,
+  .has-moving-molecule .hero-welcome {
+    margin-inline: auto;
+  }
+  .has-moving-molecule .hero-actions {
+    justify-content: center;
+  }
+  .hero.has-moving-molecule .hero-art {
+    width: min(280px, 80vw);
+    margin-inline: auto;
+  }
+}

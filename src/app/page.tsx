@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { getAnnouncements, getEvents } from "@/lib/content";
 import { partitionEvents } from "@/lib/content/adapters";
-import { Molecule } from "@/components/molecule";
+import { AnimatedMolecule } from "@/components/animated-molecule";
 import { EventCard, NewsCard } from "@/components/content";
 import { Arrow, ButtonLink, EmptyState, SectionHeading } from "@/components/ui";
 import { site } from "@/lib/site";
@@ -33,7 +33,7 @@ export default async function Home() {
   return (
     <div className="landing-page">
       <LandingMotion />
-      <section className="hero">
+      <section className="hero has-moving-molecule">
         <div className="container hero-grid">
           <div className="hero-copy">
             <p className="eyebrow light">
@@ -64,7 +64,7 @@ export default async function Home() {
             </div>
           </div>
           <div className="hero-art">
-            <Molecule />
+            <AnimatedMolecule />
           </div>
         </div>
       </section>
