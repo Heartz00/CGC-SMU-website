@@ -55,9 +55,7 @@ export default async function Login({
             <details className="admin-help">
               <summary>How do I get an application password?</summary>
               <p>
-                Open your profile, find Application Passwords, and create one
-                named “CGC Website”. Enter it here. Each officer uses their own
-                account and password.
+                You will find details to login in the dedicated CGC box file
               </p>
               <a
                 className="text-link"
