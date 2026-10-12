@@ -55,11 +55,6 @@ export function Molecule() {
           <circle cx="89" cy="195" r="18" />
         </g>
       </g>
-      <g fill="#c2d2e0" fontFamily="monospace" fontSize="11" letterSpacing="2">
-        <text x="438" y="70">
-          CGC / SMU
-        </text>
-      </g>
     </svg>
   );
 }

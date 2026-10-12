@@ -775,46 +775,39 @@ em {
 .animated-molecule {
   text-align: center;
 }
-.molecule-motion-toggle {
-  background: #ffffff14;
-  color: #fff;
-  border: 1px solid #ffffff66;
-  border-radius: 8px;
-  padding: 10px 16px;
-  min-height: 44px;
-  cursor: pointer;
+
+.animated-molecule .molecule-core {
+  transform-origin: 50% 50%;
+  transform-box: view-box;
+  animation: molecule-drift 6s ease-in-out infinite !important;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .animated-molecule .molecule-core {
-    transform-origin: 50% 50%;
-    transform-box: view-box;
-    animation: molecule-drift 6s ease-in-out infinite;
+.animated-molecule .molecule-orbit {
+  animation: molecule-orbit 12s linear infinite !important;
+}
+.animated-molecule:focus .molecule-core,
+.animated-molecule:focus .molecule-orbit {
+  animation-play-state: paused !important;
+}
+@keyframes molecule-drift {
+  0%,
+  100% {
+    transform: translateY(8px) rotate(-5deg);
   }
-  .animated-molecule .molecule-orbit {
-    animation: molecule-orbit 12s linear infinite;
+  50% {
+    transform: translateY(-12px) rotate(5deg);
   }
-  .animated-molecule.is-paused .molecule-core,
-  .animated-molecule.is-paused .molecule-orbit {
-    animation-play-state: paused;
-  }
-  @keyframes molecule-drift {
-    0%,
-    100% {
-      transform: translateY(8px) rotate(-5deg);
-    }
-    50% {
-      transform: translateY(-12px) rotate(5deg);
-    }
-  }
-  @keyframes molecule-orbit {
-    to {
-      stroke-dashoffset: -220;
-    }
+}
+@keyframes molecule-orbit {
+  to {
+    stroke-dashoffset: -220;
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .molecule-motion-toggle {
-    display: none;
+  .animated-molecule .molecule-core {
+    animation-duration: 16s !important;
+  }
+  .animated-molecule .molecule-orbit {
+    animation-duration: 24s !important;
   }
 }
 @media (max-width: 900px) {

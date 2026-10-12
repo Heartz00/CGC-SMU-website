@@ -1,19 +1,13 @@
-"use client";
-import { useState } from "react";
-import { Molecule } from "./molecule";
+﻿import { Molecule } from "./molecule";
 export function AnimatedMolecule() {
-  const [paused, setPaused] = useState(false);
   return (
-    <div className={`animated-molecule ${paused ? "is-paused" : ""}`}>
+    <div
+      className="animated-molecule"
+      tabIndex={0}
+      role="img"
+      aria-label="Animated molecule. Focus here to pause the motion."
+    >
       <Molecule />
-      <button
-        type="button"
-        className="molecule-motion-toggle"
-        aria-pressed={paused}
-        onClick={() => setPaused((value) => !value)}
-      >
-        {paused ? "Resume animation" : "Pause animation"}
-      </button>
     </div>
   );
 }
