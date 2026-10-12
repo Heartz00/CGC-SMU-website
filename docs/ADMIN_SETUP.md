@@ -6,6 +6,8 @@ On Officers, select an existing image from the dropdown, labeled with its title 
 
 ## Posting a flyer or Instagram announcement
 
+In **Photos**, choose a file, then click **Adjust / crop**. Select a crop shape, zoom, move the horizontal/vertical sliders, or rotate the picture. **Apply crop** updates the upload preview; **Use original** restores the uncropped upload. Enter the image description and click **Upload**. The editor works on phones and with keyboard controls. It creates a new library image; existing images and their assignments remain unchanged. To crop a previously uploaded image, download it from its image URL and select that file as a new upload.
+
 Failed saves now keep text, selected images, and upload files on the page. Errors appear beside affected fields. Successful saves include links to the public content. Entries are retained in memory, so save a draft before refreshing or closing the tab. If sign-in cannot be verified during saving, open the provided sign-in link in a new tab and retry after signing in. Never enter credentials into content fields.
 
 1. Upload the flyer in **Photos**, with a useful description. Images over 2 MB are prepared in the browser as WebP, with a maximum longest edge of 2400px (smaller when needed). Small files remain unchanged. Sources over 20 MB require a smaller export. The final upload remains at most 2 MB.
