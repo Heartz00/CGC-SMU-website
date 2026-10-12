@@ -1,0 +1,402 @@
+/* Shared visual layer for public pages and the council workspace. */
+:root {
+  --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --serif: var(--sans);
+  --ink: #172033;
+  --muted: #596579;
+  --line: #e8ebf1;
+}
+body {
+  -webkit-font-smoothing: antialiased;
+}
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  letter-spacing: -0.045em;
+}
+em {
+  font-style: normal;
+  font-weight: inherit;
+}
+.section {
+  padding-block: 110px;
+}
+.affiliation-inner {
+  min-height: 46px;
+}
+.affiliation {
+  padding-block: 8px;
+}
+.smu-logo {
+  width: 205px;
+}
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(255, 255, 255, 0.96);
+  backdrop-filter: blur(18px);
+}
+.header-inner {
+  min-height: 90px;
+}
+.cgc-logo {
+  width: 235px;
+}
+.navigation {
+  gap: 22px;
+}
+.navigation a {
+  font-weight: 500;
+}
+.hero {
+  position: relative;
+  background-color: var(--smu-blue);
+  background-image:
+    radial-gradient(ellipse at 80% 80%, #496ac1 0%, transparent 55%),
+    linear-gradient(150deg, #263b82 0%, #354ca1 70%);
+}
+.hero-grid {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  min-height: min(780px, 85svh);
+  padding-block: 110px;
+}
+.hero-copy {
+  text-align: center;
+  padding: 0;
+  width: 100%;
+}
+.hero .eyebrow {
+  color: #dce4ff;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+.hero .small-line {
+  display: none;
+}
+.hero h1 {
+  font-size: clamp(3.2rem, 6.5vw, 6rem);
+  line-height: 1.06;
+  font-weight: 600;
+  margin-bottom: 28px;
+}
+.hero h1 em {
+  color: #cbd8ff;
+}
+.hero-description {
+  margin-inline: auto;
+  max-width: 540px;
+  font-size: 1.08rem;
+  color: #edf1ff;
+}
+.hero-actions {
+  justify-content: center;
+  gap: 16px;
+  margin-top: 42px;
+}
+.hero-art {
+  position: absolute;
+  inset: auto -120px -200px auto;
+  width: 600px;
+  opacity: 0.16;
+  pointer-events: none;
+}
+.button {
+  border-radius: 6px;
+  font-size: 0.85rem;
+  justify-content: center;
+  min-width: 170px;
+  padding: 15px 24px;
+  transition:
+    background 0.2s,
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px #17203315;
+}
+.hero .button {
+  background: white;
+  color: #253b83;
+  min-width: 220px;
+}
+.hero .button-secondary {
+  background: #ffffff15;
+  color: white;
+  border-color: #ffffff60;
+}
+.hero .button:hover {
+  background: #e7edff;
+}
+.hero .button-secondary:hover {
+  background: #ffffff25;
+}
+.quick-grid {
+  min-height: 100px;
+}
+.quick-grid > * {
+  border: 0;
+}
+.quick-grid a {
+  font-weight: 500;
+}
+.mission-section h2 {
+  font-weight: 600;
+}
+.section-tinted {
+  background: #f7f8fa;
+}
+.page-intro .eyebrow,
+.eyebrow.light {
+  color: #ffc8d2;
+}
+.hero .eyebrow {
+  color: #dce4ff;
+}
+.resource-links small {
+  color: #d2ddec;
+}
+.news-grid {
+  gap: 28px;
+}
+.news-card {
+  padding: 28px;
+  background: #f7f8fa;
+  border: 0;
+  border-radius: 12px;
+  transition: transform 0.2s;
+}
+.news-card:hover {
+  transform: translateY(-4px);
+}
+.news-card h3 {
+  font-weight: 600;
+  font-size: 1.45rem;
+}
+.news-card .event-flyer {
+  align-self: center;
+}
+.card-meta {
+  margin-bottom: 22px;
+}
+.event-list {
+  gap: 24px;
+}
+.event-card {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 30px;
+  padding: 38px;
+  border: 0;
+  border-radius: 14px;
+  box-shadow: 0 3px 24px #17203306;
+}
+.event-card.has-flyer {
+  grid-template-columns: 72px minmax(0, 1fr) minmax(160px, 240px);
+}
+.event-card h3 {
+  font-weight: 600;
+  font-size: clamp(1.5rem, 2.7vw, 2.2rem);
+}
+.event-card .eyebrow {
+  color: var(--red);
+  font-size: 0.7rem;
+}
+.council-term {
+  padding-top: 64px;
+  scroll-margin-top: 110px;
+}
+.event-card > .event-flyer {
+  margin: 0;
+}
+.date-tile {
+  width: 72px;
+  min-width: 0;
+  border-radius: 8px;
+  background: #edf1fc;
+  color: var(--smu-blue);
+}
+.date-tile strong {
+  font-weight: 600;
+}
+.event-card .button {
+  margin-top: 12px;
+}
+.event-flyer img {
+  border-radius: 8px;
+}
+.officer-card {
+  border-radius: 12px;
+  overflow: hidden;
+  border-color: var(--line);
+}
+.officer-body h2 {
+  font-weight: 600;
+}
+.resource-feature h2,
+.closing-section h2 {
+  font-weight: 600;
+}
+.footer {
+  font-size: 0.85rem;
+}
+.footer h2 {
+  font-weight: 600;
+}
+.event-detail {
+  max-width: 1100px;
+}
+.event-detail h1 {
+  margin-block: 28px 40px;
+}
+.event-detail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 400px);
+  gap: 56px;
+}
+.event-detail-grid .event-flyer {
+  margin: 0;
+}
+.event-description {
+  white-space: pre-line;
+}
+.event-detail-actions {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 32px;
+}
+.button-share {
+  background: #edf1fc;
+  color: var(--smu-blue);
+}
+.button-share:hover {
+  background: #dae4ff;
+}
+.share-status {
+  display: block;
+  font-size: 0.8rem;
+  margin-top: 8px;
+}
+@media (max-width: 700px) {
+  .event-detail-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .event-detail-actions .button {
+    min-width: 0;
+  }
+}
+@media (max-width: 1000px) {
+  .event-card.has-flyer {
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .event-card > .event-flyer {
+    grid-column: 2;
+    max-width: 280px;
+  }
+}
+@media (max-width: 850px) {
+  .header-inner {
+    min-height: 82px;
+  }
+  .navigation.is-open {
+    padding: 24px;
+    box-shadow: 0 18px 35px #17203312;
+    border-radius: 0 0 12px 12px;
+  }
+  .navigation a {
+    min-height: 44px;
+  }
+}
+@media (max-width: 600px) {
+  .section {
+    padding-block: 68px;
+  }
+  .cgc-logo {
+    width: 180px;
+  }
+  .smu-logo {
+    width: 180px;
+  }
+  .hero-grid {
+    min-height: min(680px, 85svh);
+    padding-block: 80px;
+    display: flex;
+  }
+  .hero-copy {
+    padding: 0;
+  }
+  .hero h1 {
+    font-size: clamp(2.6rem, 10.5vw, 3.9rem);
+  }
+  .hero-description {
+    font-size: 0.95rem;
+    max-width: 320px;
+  }
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 32px;
+  }
+  .hero .button {
+    width: min(100%, 320px);
+    font-size: 0.85rem;
+  }
+  .hero-art {
+    display: block;
+    width: 390px;
+    right: -130px;
+    bottom: -120px;
+  }
+  .quick-grid {
+    padding-block: 24px;
+    row-gap: 16px;
+  }
+  .news-card {
+    padding: 24px;
+  }
+  .event-card,
+  .event-card.has-flyer {
+    padding: 24px;
+    gap: 20px;
+    grid-template-columns: 54px minmax(0, 1fr);
+  }
+  .date-tile {
+    width: 54px;
+    padding: 10px 5px;
+  }
+  .date-tile strong {
+    font-size: 1.8rem;
+  }
+  .event-card > .event-flyer {
+    grid-column: 1/-1;
+    justify-self: center;
+    width: 100%;
+  }
+  .event-card .button {
+    width: 100%;
+    min-width: 0;
+    gap: 10px;
+    font-size: 0.78rem;
+    padding-inline: 12px;
+  }
+  .footer-cgc-logo {
+    width: 235px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

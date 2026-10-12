@@ -1,0 +1,8 @@
+node_modules
+.next
+.npm-cache
+.test-build
+.qa
+discovery
+package-lock.json
+next-env.d.ts
