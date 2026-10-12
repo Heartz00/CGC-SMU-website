@@ -46,11 +46,8 @@ export default async function Home() {
               <em>chemistry community.</em>
             </h1>
             <p className="hero-description">
-              We’re the Chemistry Graduate Council (CGC), a student-led
-              community for chemistry graduate students at Southern Methodist
-              University. We connect students through professional development,
-              social events, and outreach—and make graduate life better
-              together.
+              SMU’s Chemistry Graduate Council connects graduate students
+              through professional development, social events, and outreach.
             </p>
             <p className="hero-welcome">
               Whether you’re starting your graduate journey, returning to
@@ -60,6 +57,9 @@ export default async function Home() {
               <ButtonLink href="/events">Upcoming events</ButtonLink>
               <ButtonLink href="/executive-committee" secondary>
                 Meet the council
+              </ButtonLink>
+              <ButtonLink href="/about" secondary>
+                About us
               </ButtonLink>
             </div>
           </div>
