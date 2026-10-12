@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getAnnouncements } from "@/lib/content";
 import { NewsCard } from "@/components/content";
 import { EmptyState, PageIntro } from "@/components/ui";
+import { CollectionSearch } from "@/components/collection-search";
 export const metadata: Metadata = { title: "News & Announcements" };
 export const revalidate = 300;
 export default async function News() {
@@ -20,11 +21,16 @@ export default async function News() {
             : "Updates, activities, and news from the council."}
         </p>
         {news.items.length ? (
-          <div className="news-grid">
-            {news.items.map((post) => (
-              <NewsCard key={post.id} post={post} />
-            ))}
-          </div>
+          <CollectionSearch
+            label="announcements"
+            className="news-grid"
+            items={news.items.map((post) => ({
+              id: String(post.id),
+              text: `${post.title} ${post.excerpt}`,
+              group: post.date.slice(0, 4),
+              content: <NewsCard post={post} />,
+            }))}
+          />
         ) : (
           <EmptyState title="No announcements yet.">
             Published council updates will appear here.

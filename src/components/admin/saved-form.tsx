@@ -12,6 +12,11 @@ import {
 import Link from "next/link";
 import type { SaveResult } from "@/lib/admin/save-result";
 const ErrorContext = createContext<Record<string, string>>({});
+const DirtyContext = createContext<() => void>(() => {});
+export function useMarkUnsaved() {
+  return useContext(DirtyContext);
+}
+const navigationChecks = new WeakSet<Event>();
 export function FieldError({ name }: { name: string }) {
   const errors = useContext(ErrorContext);
   const id = useId();
@@ -34,6 +39,46 @@ export function SavedForm({
 }) {
   const form = useRef<HTMLFormElement>(null);
   const entries = useRef<FormData | null>(null);
+  const dirty = useRef(false);
+  const restoring = useRef(false);
+  useEffect(() => {
+    const node = form.current;
+    const changed = () => {
+      dirty.current = true;
+    };
+    node?.addEventListener("cgc:changed", changed);
+    const beforeUnload = (event: BeforeUnloadEvent) => {
+      if (dirty.current) {
+        event.preventDefault();
+        event.returnValue = "";
+      }
+    };
+    const click = (event: MouseEvent) => {
+      const target =
+        event.target instanceof Element ? event.target.closest("a") : null;
+      if (navigationChecks.has(event) || event.defaultPrevented) return;
+      if (
+        !dirty.current ||
+        !target ||
+        target.target === "_blank" ||
+        target.hasAttribute("download") ||
+        target.getAttribute("href")?.startsWith("#")
+      )
+        return;
+      navigationChecks.add(event);
+      if (!window.confirm("You have unsaved changes. Leave this page?")) {
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    };
+    window.addEventListener("beforeunload", beforeUnload);
+    document.addEventListener("click", click, true);
+    return () => {
+      node?.removeEventListener("cgc:changed", changed);
+      window.removeEventListener("beforeunload", beforeUnload);
+      document.removeEventListener("click", click, true);
+    };
+  }, []);
   const [clientError, setClientError] = useState("");
   const [nativeErrors, setNativeErrors] = useState<Record<string, string>>({});
   const [state, submit, pending] = useActionState(
@@ -42,6 +87,7 @@ export function SavedForm({
       if (previous.postId) data.set("id", String(previous.postId));
       entries.current = data;
       const result = await action(data);
+      if (result.success) dirty.current = false;
       return {
         ...result,
         version: result.version || previous.version,
@@ -59,6 +105,7 @@ export function SavedForm({
     }
     const snapshot = entries.current;
     const frame = requestAnimationFrame(() => {
+      restoring.current = true;
       const offsets: Record<string, number> = {};
       for (const element of Array.from(node.elements)) {
         if (
@@ -129,6 +176,7 @@ export function SavedForm({
       if (version && state.version) version.value = state.version;
       const id = node.querySelector<HTMLInputElement>('input[name="id"]');
       if (id && state.postId) id.value = String(state.postId);
+      restoring.current = false;
     });
     return () => cancelAnimationFrame(frame);
   }, [state, clearOnSuccess]);
@@ -138,11 +186,16 @@ export function SavedForm({
       action={submit}
       className={className}
       aria-busy={pending}
+      onClickCapture={(event) => {
+        if ((event.target as Element).closest("[data-unsaved-change]"))
+          dirty.current = true;
+      }}
       onSubmit={() => {
         setClientError("");
         setNativeErrors({});
       }}
       onChange={() => {
+        if (!restoring.current) dirty.current = true;
         setClientError("");
         setNativeErrors({});
       }}
@@ -171,11 +224,17 @@ export function SavedForm({
         );
       }}
     >
-      <ErrorContext.Provider value={{ ...state.fields, ...nativeErrors }}>
-        <fieldset className="admin-form-fields" disabled={pending}>
-          {children}
-        </fieldset>
-      </ErrorContext.Provider>
+      <DirtyContext.Provider
+        value={() => {
+          if (!restoring.current) dirty.current = true;
+        }}
+      >
+        <ErrorContext.Provider value={{ ...state.fields, ...nativeErrors }}>
+          <fieldset className="admin-form-fields" disabled={pending}>
+            {children}
+          </fieldset>
+        </ErrorContext.Provider>
+      </DirtyContext.Provider>
       {(clientError || state.message) && (
         <div
           className={`admin-notice ${state.success ? "success" : ""}`}

@@ -7,8 +7,10 @@ export type Officer = {
   termEnd?: string;
   email?: string;
   photo?: string;
+  photoPosition?: "top" | "center" | "bottom";
 };
 export type CouncilEvent = {
+  status?: "scheduled" | "cancelled" | "rescheduled";
   id?: string;
   flyer?: string;
   title: string;

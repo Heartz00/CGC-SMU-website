@@ -68,6 +68,13 @@ export function EventCard({
       </div>
       <div className="event-content">
         {featured && <p className="eyebrow">Featured event</p>}
+        {event.status && event.status !== "scheduled" && (
+          <p className="event-status" role="note">
+            {event.status === "cancelled"
+              ? "Cancelled"
+              : "Rescheduled — see updated date"}
+          </p>
+        )}
         <h3>
           <Link href={eventPath(event)}>{event.title}</Link>
         </h3>
@@ -85,7 +92,14 @@ export function EventCard({
             View event <Arrow />
           </Link>
         </p>
-        {event.registration && (
+        <p>
+          {event.status !== "cancelled" && (
+            <a className="text-link" href={`${eventPath(event)}/calendar`}>
+              Add to calendar <Arrow />
+            </a>
+          )}
+        </p>
+        {event.registration && event.status !== "cancelled" && (
           <a className="button" href={event.registration}>
             Registration & details <Arrow />
           </a>
@@ -114,6 +128,9 @@ export function OfficerCard({ officer }: { officer: Officer }) {
           <Image
             src={officer.photo}
             alt={officer.name}
+            style={{
+              objectPosition: `center ${officer.photoPosition || "center"}`,
+            }}
             fill
             sizes="(max-width: 640px) 90vw, (max-width: 1000px) 45vw, 30vw"
           />

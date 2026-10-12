@@ -31,6 +31,16 @@ No WordPress passwords, application passwords, or keys are required. Vercel norm
 
 The above applies to public content fetching. To enable the optional dashboard, configure server-only `ADMIN_ENABLED=true` and a generated `ADMIN_SESSION_SECRET`, then follow [admin setup](ADMIN_SETUP.md). Officers enter their own dedicated WordPress application passwords at sign-in; never store those as shared deployment variables. Configure login rate limiting before public activation.
 
+## Analytics and speed monitoring
+
+The official Vercel Web Analytics and Speed Insights components are installed. In the Vercel project, enable **Analytics** and **Speed Insights**, then set `NEXT_PUBLIC_SITE_METRICS_ENABLED=true` in the production environment and redeploy. The integration stays disabled until that flag is set. Admin paths are excluded, including client navigation after a public page; public query strings and hashes are removed before reporting. Do not treat local fixture checks as proof that Vercel tracking has been activated.
+
+See [Web Analytics setup](https://vercel.com/docs/analytics/quickstart) and [Speed Insights setup](https://vercel.com/docs/speed-insights/quickstart).
+
+## Custom domain
+
+The current production address remains `https://cgc-smu-websites.vercel.app`. To use a domain you own, add it in the Vercel project's Settings → Domains and follow its DNS instructions. An institutional subdomain requires its owner to configure DNS. Set `SITE_URL` to the final HTTPS origin and redeploy so metadata and the sitemap use that address. No domain has been purchased, attached, or modified by development tools.
+
 ## Updates and ownership
 
 Use [launch review](LAUNCH_REVIEW.md) for live NCW publication verification, production sign-in settings, and hosting rate-limit checks. Local builds and browser fixtures do not activate or verify Vercel configuration.

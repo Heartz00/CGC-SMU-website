@@ -40,9 +40,10 @@ export function historyTable(terms: CouncilTerm[]) {
       officer.bio,
       officer.email || "",
       officer.photo || "",
+      officer.photoPosition || "center",
     ]),
   );
-  return `<table><thead><tr>${["Term", "Start", "End", "Name", "Role", "Bio", "Email", "Photo"].map((key) => `<th>${key}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((value) => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  return `<table><thead><tr>${["Term", "Start", "End", "Name", "Role", "Bio", "Email", "Photo", "Photo position"].map((key) => `<th>${key}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((value) => `<td>${escape(value)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 export function parseCouncilHistory(html: string): CouncilTerm[] {
   const $ = load(html);
@@ -87,6 +88,9 @@ export function parseCouncilHistory(html: string): CouncilTerm[] {
         termEnd: end,
         email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : undefined,
         photo: wordpressImage(get("Photo")),
+        ...(["top", "bottom"].includes(get("Photo position"))
+          ? { photoPosition: get("Photo position") as Officer["photoPosition"] }
+          : {}),
       });
       terms.set(id, term);
     }

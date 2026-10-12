@@ -94,6 +94,9 @@ export function parseOfficers(html: string): Officer[] {
         name: row.name,
         role: row.role,
         bio: row.bio || "",
+        ...(["top", "bottom"].includes(row["photo position"])
+          ? { photoPosition: row["photo position"] as Officer["photoPosition"] }
+          : {}),
         term: row.term || "",
         ...(validTermDate(row["term start"] || "") &&
         validTermDate(row["term end"] || "") &&
@@ -154,6 +157,9 @@ export function parseEvents(html: string): CouncilEvent[] {
     .map((row) => ({
       title: row.title,
       id: row.id || undefined,
+      ...(["cancelled", "rescheduled"].includes(row.status)
+        ? { status: row.status as CouncilEvent["status"] }
+        : {}),
       start: row.start,
       end:
         validDate(row.end) && Date.parse(row.end) >= Date.parse(row.start)

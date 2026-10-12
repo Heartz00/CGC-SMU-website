@@ -17,7 +17,9 @@ export default async function Home() {
     getHomeSettings(),
   ]);
   const upcoming = featureFirst(
-    partitionEvents(events.items).upcoming,
+    partitionEvents(events.items).upcoming.filter(
+      (event) => event.status !== "cancelled",
+    ),
     settings.featuredEvent,
     eventSlug,
   );

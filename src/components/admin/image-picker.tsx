@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useId, useState } from "react";
 import type { LibraryImage } from "@/lib/admin/image-types";
-import { FieldError } from "./saved-form";
+import { FieldError, useMarkUnsaved } from "./saved-form";
 let libraryRequest: Promise<LibraryImage[]> | null = null;
 function loadImages() {
   if (!libraryRequest)
@@ -29,6 +29,7 @@ export function ImagePicker({
   errorName?: string;
 }) {
   const id = useId();
+  const markUnsaved = useMarkUnsaved();
   const [url, setUrl] = useState(initial);
   const [images, setImages] = useState<LibraryImage[]>([]);
   const [loading, setLoading] = useState(true);
@@ -56,6 +57,7 @@ export function ImagePicker({
   }, [reload]);
   const selected = images.find((image) => image.url === url);
   function choose(value: string) {
+    markUnsaved();
     setUrl(value);
     onChange?.();
   }

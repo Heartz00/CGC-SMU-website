@@ -155,6 +155,31 @@ export function RecordsEditor({
             <legend>
               {kind === "officers" ? "Officer" : "Event"} {index + 1}
             </legend>
+            {kind === "officers" ? (
+              <label className="admin-field">
+                <span>Portrait framing</span>
+                <select
+                  name="photoPosition"
+                  defaultValue={row.data.photoPosition || "center"}
+                >
+                  <option value="top">Focus on top</option>
+                  <option value="center">Center</option>
+                  <option value="bottom">Focus on bottom</option>
+                </select>
+              </label>
+            ) : (
+              <label className="admin-field">
+                <span>Event status</span>
+                <select
+                  name="status"
+                  defaultValue={row.data.status || "scheduled"}
+                >
+                  <option value="scheduled">Scheduled</option>
+                  <option value="rescheduled">Rescheduled</option>
+                  <option value="cancelled">Cancelled</option>
+                </select>
+              </label>
+            )}
             <div className="admin-fields">
               {columns
                 .filter((column) => !(hideMemberTerm && column.name === "term"))
@@ -223,15 +248,19 @@ export function RecordsEditor({
             <button
               type="button"
               className="admin-remove"
-              onClick={() => {
+              onClick={(event) => {
                 if (
                   window.confirm(
                     "Remove this record? Save to apply the change.",
                   )
-                )
+                ) {
+                  event.currentTarget
+                    .closest("form")
+                    ?.dispatchEvent(new Event("cgc:changed"));
                   setRows((current) =>
                     current.filter((item) => item.key !== row.key),
                   );
+                }
               }}
             >
               Remove {kind === "officers" ? "officer" : "event"}
@@ -246,6 +275,7 @@ export function RecordsEditor({
         {kind === "events" && (
           <button
             type="button"
+            data-unsaved-change
             className="admin-secondary"
             disabled={rows.length >= 80}
             onClick={() => {
@@ -264,6 +294,7 @@ export function RecordsEditor({
         )}
         <button
           type="button"
+          data-unsaved-change
           className="admin-secondary"
           disabled={rows.length >= (kind === "officers" ? 30 : 80)}
           onClick={() => {

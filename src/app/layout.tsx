@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PublicMetrics } from "@/components/public-metrics";
 import { Header, Footer } from "@/components/layout";
 import { site } from "@/lib/site";
 import "./globals.css";
@@ -34,6 +35,7 @@ export default function RootLayout({
           {children}
         </main>
         <Footer />
+        <PublicMetrics />
       </body>
     </html>
   );

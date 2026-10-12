@@ -107,6 +107,16 @@ export function officerForm(form: FormData): Officer[] {
       role,
       email,
       photo,
+      ...(form.getAll("photoPosition")[i] &&
+      ["top", "center", "bottom"].includes(
+        String(form.getAll("photoPosition")[i]),
+      )
+        ? {
+            photoPosition: String(
+              form.getAll("photoPosition")[i],
+            ) as Officer["photoPosition"],
+          }
+        : {}),
       bio: get("bio", i),
       term: get("term", i, 100),
       ...(termStart ? { termStart, termEnd } : {}),
@@ -115,7 +125,17 @@ export function officerForm(form: FormData): Officer[] {
 }
 export function officersTable(officers: Officer[]) {
   return table(
-    ["Name", "Role", "Bio", "Term", "Email", "Photo", "Term start", "Term end"],
+    [
+      "Name",
+      "Role",
+      "Bio",
+      "Term",
+      "Email",
+      "Photo",
+      "Term start",
+      "Term end",
+      "Photo position",
+    ],
     officers.map((o) => [
       o.name,
       o.role,
@@ -125,6 +145,7 @@ export function officersTable(officers: Officer[]) {
       o.photo || "",
       o.termStart || "",
       o.termEnd || "",
+      o.photoPosition || "center",
     ]),
   );
 }
@@ -156,6 +177,12 @@ export function eventsForm(form: FormData): CouncilEvent[] {
     return {
       title,
       start,
+      ...(form.getAll("status")[i] &&
+      ["scheduled", "cancelled", "rescheduled"].includes(
+        String(form.getAll("status")[i]),
+      )
+        ? { status: String(form.getAll("status")[i]) as CouncilEvent["status"] }
+        : {}),
       id:
         typeof form.getAll("eventId")[i] === "string"
           ? String(form.getAll("eventId")[i]).slice(0, 100)
@@ -189,6 +216,7 @@ export function eventsTable(events: CouncilEvent[]) {
       "Registration",
       "Flyer",
       "ID",
+      "Status",
     ],
     events.map((e) => [
       e.title,
@@ -199,6 +227,7 @@ export function eventsTable(events: CouncilEvent[]) {
       e.registration || "",
       e.flyer || "",
       e.id || "",
+      e.status || "scheduled",
     ]),
   );
 }

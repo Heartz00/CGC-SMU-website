@@ -22,6 +22,12 @@ Changing the existing WordPress page to a table is optional and must be done by 
 
 ## Events
 
+The React Events editor includes **Scheduled**, **Rescheduled**, and **Cancelled**. For rescheduling, update the date/time as well as the status. Cancelled events stay discoverable through the public Cancelled filter, lose registration links, and are excluded from the homepage's upcoming section. Their calendar download carries `STATUS:CANCELLED` with the existing event UID; calendar applications control how imported updates are applied. Calendar files are downloads, not a subscription or automatic email reminder.
+
+Officer editors include **Portrait framing** (top, center, bottom). Use Preview changes to inspect the crop before saving. Existing portraits default to centered; the selected position persists in current and archived rosters.
+
+Public Events, Announcements, and Resources support text search and filters. Search covers loaded records and the documented calendar/post windows, not the entire historical CMS database.
+
 Continue using the existing Calendar+ Events area in WordPress. Set the event date/time, description, location, and relevant source links. The app reads the public monthly Calendar+ endpoint, converts its UTC values for display in `America/Chicago`, and excludes historical activities from upcoming events. It shows a rolling window of two previous months through five months ahead. Events outside that window remain on WordPress.
 
 Check that the event's schedule matches its description. A source event with conflicting times should be corrected in WordPress. Events lacking usable structured dates are omitted.

@@ -63,6 +63,8 @@ Before enabling on public hosting, enable hosting/WAF rate limiting for `/admin/
 
 ## What has not been verified yet
 
+Content forms warn before refreshing/closing an edited page or following an ordinary link in the same tab. This includes image selection and record additions/removals; successful saves clear the warning. Failed-save entries remain in memory. These warnings do not persist drafts across browser crashes or closing the tab: save announcements as drafts, then use **Continue a saved draft** in Announcements. Browser history navigation is not covered by the link interception.
+
 The sidebar now includes **Homepage** for featuring content and **Council handover** for term dates and outgoing council archives. Both require permission to publish pages. See [handover instructions](HANDOVER.md) for the routine workflow. Their supporting records are created on the first save; archived rosters are publicly visible.
 
 - Real login using an SMU-issued application password.

@@ -62,8 +62,15 @@ export default async function Event(props: Props) {
             {event.location}
           </p>
           <p className="event-description">{event.description}</p>
+          {event.status && event.status !== "scheduled" && (
+            <p className="event-status">
+              {event.status === "cancelled"
+                ? "This event is cancelled."
+                : "This event has been rescheduled. The date above is the updated schedule."}
+            </p>
+          )}
           <div className="event-detail-actions">
-            {event.registration && (
+            {event.registration && event.status !== "cancelled" && (
               <a className="button" href={event.registration}>
                 Registration & details ↗
               </a>
@@ -72,7 +79,9 @@ export default async function Event(props: Props) {
               className="button button-share"
               href={`${eventPath(event)}/calendar`}
             >
-              Add to calendar
+              {event.status === "cancelled"
+                ? "Download cancellation"
+                : "Add to calendar"}
             </a>
             <ShareLink />
           </div>

@@ -61,6 +61,7 @@ export function calendarFile(event: CouncilEvent, now = new Date()) {
       "PRODID:-//SMU CGC//Council Events//EN",
       "CALSCALE:GREGORIAN",
       "BEGIN:VEVENT",
+      event.status === "cancelled" ? "STATUS:CANCELLED" : "STATUS:CONFIRMED",
       `UID:${eventKey(event)}@cgc.smu.edu`,
       `DTSTAMP:${utc(now.toISOString())}`,
       start,

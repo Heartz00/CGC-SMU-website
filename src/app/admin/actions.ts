@@ -132,7 +132,8 @@ export async function saveHomeSettings(form: FormData): Promise<SaveResult> {
     if (
       featuredEvent &&
       !partitionEvents(events.items).upcoming.some(
-        (event) => eventSlug(event) === featuredEvent,
+        (event) =>
+          event.status !== "cancelled" && eventSlug(event) === featuredEvent,
       )
     )
       return {

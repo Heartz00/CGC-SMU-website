@@ -5,7 +5,7 @@ October 11, 2026, Windows, Node 24.11.0, Next.js 16.4.0.
 - TypeScript check passed.
 - ESLint passed.
 - Prettier formatting check passed.
-- All 41 tests passed, covering content adapters, encrypted sessions, permissions and conflicts, login throttling, Dallas dates, image validation, paginated image selection, flyer persistence, combined publishing with partial-save recovery, field-specific record errors, stable event links, escaped/folded calendar downloads, homepage pin fallback, council archive/date round trips, undoing archives without changing other entries, and independent past-council creation with duplicate/version safeguards.
+- All 43 tests passed, including event-status persistence, stable cancellation UIDs, portrait framing in current and historical rosters, and the previous authentication/content/publishing checks.
 - Production build passed, including the new composer, using an isolated copy and the webpack build option so the active development server remained available. That copy contained no account credentials.
 - HTTP smoke checks passed for all public pages, the October 2024 news detail, and all four resource details. An unknown route returned 404. Each rendered page had one main heading and no surviving WPBakery shortcodes.
 - Real headless Chrome checks at 1440px, 390px, and 320px confirmed loaded CSS, layouts without horizontal overflow, mobile menu open/close behavior, and Escape returning focus to the menu button.
@@ -22,6 +22,10 @@ October 11, 2026, Windows, Node 24.11.0, Next.js 16.4.0.
 See [launch review](LAUNCH_REVIEW.md) for the remaining live account, hosting rate-limit, and representative-device checks. The fixture's NCW content is local only; no announcement or event was published by these checks.
 
 ## Dashboard activation review
+
+New browser checks verified text search, category filters and empty results, unsaved-change warnings for refresh and same-tab links, and clearing the warning after a successful save. Record previews still pass at 1440px, 390px and 320px. These fixtures stub saves and do not modify live content. Analytics integration remains disabled pending project activation and the production environment flag.
+
+The updated isolated production build passed, with zero Axe WCAG 2 A/AA and 2.1 A/AA violations across the nine public/sign-in routes. Search controls and filtered cards passed the 390px overflow checks. The latest local mobile performance observation was LCP 664 ms and CLS 0; these remain lab measurements. npm 10 validated the analytics dependency lockfile against current registry metadata in a folder without installed dependencies.
 
 The past-council editor and record previews passed an isolated production build. Chrome component fixtures at 1440px, 390px and 320px verified officer preview rendering, phone mode, absence of horizontal overflow, opening invalid collapsed records, and successful form feedback with keyboard input. The browser save was stubbed and performed no live CMS writes. Current officers are never a write destination of the past-council service.
 

@@ -4,6 +4,7 @@ import { partitionEvents } from "@/lib/content/adapters";
 import { EventCard } from "@/components/content";
 import { EmptyState, PageIntro, SectionHeading } from "@/components/ui";
 import { site } from "@/lib/site";
+import { CollectionSearch } from "@/components/collection-search";
 export const metadata: Metadata = { title: "Events" };
 export const revalidate = 300;
 export default async function Events() {
@@ -22,12 +23,25 @@ export default async function Events() {
         <p className="section-note">
           All event times are displayed in Dallas local time.
         </p>
-        {upcoming.length ? (
-          <div className="event-list">
-            {upcoming.map((event) => (
-              <EventCard key={`${event.title}-${event.start}`} event={event} />
-            ))}
-          </div>
+        {events.items.length ? (
+          <CollectionSearch
+            label="events"
+            className="event-list"
+            defaultGroup={
+              upcoming.some((e) => e.status !== "cancelled") ? "Upcoming" : ""
+            }
+            items={[...upcoming, ...past].map((event) => ({
+              id: `${event.title}-${event.start}`,
+              text: `${event.title} ${event.description} ${event.location}`,
+              group:
+                event.status === "cancelled"
+                  ? "Cancelled"
+                  : upcoming.includes(event)
+                    ? "Upcoming"
+                    : "Past",
+              content: <EventCard event={event} />,
+            }))}
+          />
         ) : (
           <EmptyState
             title="No upcoming events are listed here."
@@ -40,21 +54,6 @@ export default async function Events() {
           </EmptyState>
         )}
       </section>
-      {past.length > 0 && (
-        <section className="section section-tinted">
-          <div className="container">
-            <SectionHeading label="Looking back" title="Past gatherings." />
-            <div className="event-list">
-              {past.map((event) => (
-                <EventCard
-                  key={`${event.title}-${event.start}`}
-                  event={event}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </>
   );
 }

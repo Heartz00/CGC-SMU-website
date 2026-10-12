@@ -16,7 +16,9 @@ export default async function Homepage() {
     getEvents(),
   ]);
   const settings = parseHomeSettings(page?.content.rendered || ""),
-    upcoming = partitionEvents(events.items).upcoming;
+    upcoming = partitionEvents(events.items).upcoming.filter(
+      (event) => event.status !== "cancelled",
+    );
   return (
     <AdminShell
       title="Make the homepage yours."

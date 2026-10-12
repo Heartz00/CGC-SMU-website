@@ -6,12 +6,17 @@ import { isCombinedUpdate } from "@/lib/admin/publishing";
 export default async function Announcements({
   searchParams,
 }: {
-  searchParams: Promise<{ notice?: string }>;
+  searchParams: Promise<{ notice?: string; status?: string }>;
 }) {
   const { session } = await requireAdmin("edit_posts");
-  const { notice } = await searchParams;
+  const { notice, status } = await searchParams;
+  const draftsOnly = status === "draft";
   const posts = await wordpressRequest<EditablePost[]>(session, "posts", {
-    query: { context: "edit", status: "publish,draft,pending", per_page: "30" },
+    query: {
+      context: "edit",
+      status: draftsOnly ? "draft" : "publish,draft,pending",
+      per_page: "30",
+    },
   });
   return (
     <AdminShell
@@ -19,6 +24,18 @@ export default async function Announcements({
       description="Write announcements, keep drafts private, and publish when you’re ready."
     >
       <Notice kind={notice} />
+      <p>
+        <Link
+          className="text-link"
+          href={
+            draftsOnly
+              ? "/admin/announcements"
+              : "/admin/announcements?status=draft"
+          }
+        >
+          {draftsOnly ? "All announcements" : "Continue a saved draft"}
+        </Link>
+      </p>
       <Link className="button" href="/admin/publish">
         + New announcement
       </Link>

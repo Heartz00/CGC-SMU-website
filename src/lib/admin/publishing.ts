@@ -39,5 +39,12 @@ export function upsertEvent(events: CouncilEvent[], event: CouncilEvent) {
   const existing = events.findIndex((item) => item.id === event.id);
   return existing < 0
     ? [...events, event]
-    : events.map((item, index) => (index === existing ? event : item));
+    : events.map((item, index) =>
+        index === existing
+          ? {
+              ...event,
+              ...(!event.status && item.status ? { status: item.status } : {}),
+            }
+          : item,
+      );
 }

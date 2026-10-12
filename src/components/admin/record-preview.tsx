@@ -56,6 +56,11 @@ export function RecordPreview({
               bio: get("bio", i),
               term: get("councilLabel") || get("term", i),
               photo: image(get("photo", i)),
+              photoPosition: ["top", "center", "bottom"].includes(
+                get("photoPosition", i),
+              )
+                ? (get("photoPosition", i) as Officer["photoPosition"])
+                : undefined,
               email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(get("email", i))
                 ? get("email", i)
                 : undefined,
@@ -68,6 +73,11 @@ export function RecordPreview({
                 location: get("location", i),
                 description: get("description", i),
                 flyer: image(get("flyer", i)),
+                status: ["scheduled", "cancelled", "rescheduled"].includes(
+                  get("status", i),
+                )
+                  ? (get("status", i) as CouncilEvent["status"])
+                  : undefined,
                 end: Number.isFinite(Date.parse(get("end", i)))
                   ? get("end", i)
                   : undefined,
