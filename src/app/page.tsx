@@ -41,12 +41,20 @@ export default async function Home() {
               SMU Chemistry Graduate Council
             </p>
             <h1>
-              Good chemistry.
+              Welcome to your
               <br />
-              <em>Great community.</em>
+              <em>chemistry community.</em>
             </h1>
             <p className="hero-description">
-              Science brings us together. Community moves us forward.
+              We’re the Chemistry Graduate Council (CGC), a student-led
+              community for chemistry graduate students at Southern Methodist
+              University. We connect students through professional development,
+              social events, and outreach—and make graduate life better
+              together.
+            </p>
+            <p className="hero-welcome">
+              Whether you’re starting your graduate journey, returning to
+              campus, or visiting, we’re glad you’re here.
             </p>
             <div className="hero-actions">
               <ButtonLink href="/events">Upcoming events</ButtonLink>

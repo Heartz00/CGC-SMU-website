@@ -731,3 +731,10 @@ em {
     }
   }
 }
+.hero-welcome {
+  max-width: 560px;
+  color: #fff;
+  font-size: 1rem;
+  line-height: 1.65;
+  margin: 0 0 24px;
+}
