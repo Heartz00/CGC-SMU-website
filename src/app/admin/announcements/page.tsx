@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AdminShell, Notice } from "@/components/admin/shared";
 import { requireAdmin } from "@/lib/admin/auth";
 import { wordpressRequest, type EditablePost } from "@/lib/admin/wordpress";
-import { isCombinedUpdate } from "@/lib/admin/publishing";
+import { eventDraft, isCombinedUpdate } from "@/lib/admin/publishing";
 export default async function Announcements({
   searchParams,
 }: {
@@ -20,8 +20,8 @@ export default async function Announcements({
   });
   return (
     <AdminShell
-      title="Keep the community informed."
-      description="Write announcements, keep drafts private, and publish when you’re ready."
+      title="Manage your updates."
+      description="Create each update once. Events and general announcements use the same editor."
     >
       <Notice kind={notice} />
       <p>
@@ -37,7 +37,7 @@ export default async function Announcements({
         </Link>
       </p>
       <Link className="button" href="/admin/publish">
-        + New announcement
+        + New update
       </Link>
       <p className="admin-note">
         <Link href="/admin/publish?template=ncw">
@@ -56,6 +56,11 @@ export default async function Announcements({
           >
             <strong>{post.title.raw || post.title.rendered}</strong>
             <span className="admin-badge">{post.status}</span>
+            <span className="admin-badge">
+              {eventDraft(post.content.raw || post.content.rendered)
+                ? "Event update"
+                : "Announcement"}
+            </span>
             <span> Edit ↗</span>
           </Link>
         ))}

@@ -2,6 +2,8 @@
 
 ## Latest UI/UX workflow checks
 
+Navigation and event/announcement separation passed all 59 unit tests. Browser checks at 1440, 1200, 1120, 1024, 768, 390, and 320 pixels verified header fit, a single active menu item, outside-tap dismissal, mobile route selection, and client-side transitions without a full document reload. A read-only admin navigation fixture verified native Space-key activation, current-section labeling, a compact grid menu, and route navigation. Axe WCAG 2/2.1 A/AA reported no violations in that fixture. No CMS content was modified; deduplication changes public listing behavior only.
+
 The image picker supports inline upload-and-select and cropping a copy of an existing library image. The source-file endpoint requires sign-in and upload permission, looks up a media ID through the authenticated CMS API, downloads only HTTPS SMU upload URLs without forwarding credentials, rejects redirects, checks signatures, and bounds source size to 20 MB. Unit tests cover these boundaries and recovery schema/expiration/credential exclusion. All 57 tests passed.
 
 Chrome production fixtures verified new-file and existing-image cropping, automatic selection, thumbnail pagination, absence of nested forms, gallery filtering/pagination, arrow-key and swipe navigation, focus restoration, recovery after navigation, successful-save cleanup, Dallas date restoration, disabled-browser-storage feedback, and opening nested optional sections on validation errors. The landing animation is present normally and disabled under reduced-motion preferences. Fixtures use mocked uploads and saves; no live CMS writes were performed.

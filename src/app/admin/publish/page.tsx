@@ -11,7 +11,12 @@ import type { CouncilEvent } from "@/lib/content/types";
 export default async function Publish({
   searchParams,
 }: {
-  searchParams: Promise<{ post?: string; template?: string; saved?: string }>;
+  searchParams: Promise<{
+    post?: string;
+    template?: string;
+    saved?: string;
+    type?: string;
+  }>;
 }) {
   const { session, user } = await requireAdmin("edit_posts");
   const query = await searchParams;
@@ -26,7 +31,10 @@ export default async function Publish({
   const parts = announcementParts(html);
   const event: CouncilEvent | undefined =
     eventDraft(html) ||
-    (!post && query.template === "ncw" ? ncwTemplate : undefined);
+    (!post && query.template === "ncw" ? ncwTemplate : undefined) ||
+    (!post && query.type === "event"
+      ? { title: "", start: "", location: "", description: "" }
+      : undefined);
   return (
     <AdminShell
       title="Share something new."
@@ -50,7 +58,7 @@ export default async function Publish({
         }}
         canPublish={!!user.capabilities.publish_posts}
         canCalendar={!!user.capabilities.publish_pages}
-        draftKey={`cgc-draft:${user.id}:update:${post?.id || "new"}:${query.template || "blank"}`}
+        draftKey={`cgc-draft:${user.id}:update:${post?.id || "new"}:${query.template || (query.type === "event" ? "event" : "blank")}`}
       />
     </AdminShell>
   );

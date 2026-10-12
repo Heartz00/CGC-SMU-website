@@ -9,6 +9,7 @@ import { getHomeSettings } from "@/lib/content/council-settings";
 import { featureFirst } from "@/lib/content/home-settings";
 import { eventSlug } from "@/lib/content/event-links";
 import { LandingMotion } from "@/components/landing-motion";
+import { standaloneAnnouncements } from "@/lib/content/announcement-events";
 export const revalidate = 300;
 
 export default async function Home() {
@@ -25,7 +26,7 @@ export default async function Home() {
     eventSlug,
   );
   const posts = featureFirst(
-    news.items,
+    standaloneAnnouncements(news.items, events.items),
     settings.featuredAnnouncement,
     (post) => post.id,
   );

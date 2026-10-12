@@ -13,11 +13,12 @@ export const site = {
     "Community, connection, and resources for chemistry graduate students at Southern Methodist University.",
 };
 export const navigation = [
-  { href: "/photos", label: "Photos" },
-  { href: "/about", label: "About" },
-  { href: "/executive-committee", label: "Our people" },
+  { href: "/", label: "Home" },
   { href: "/events", label: "Events" },
-  { href: "/news", label: "News" },
+  { href: "/news", label: "Announcements" },
+  { href: "/executive-committee", label: "People" },
+  { href: "/photos", label: "Photos" },
   { href: "/resources", label: "Resources" },
+  { href: "/about", label: "About" },
   { href: "/contact", label: "Contact" },
 ];

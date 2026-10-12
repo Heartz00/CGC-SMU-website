@@ -691,3 +691,43 @@ em {
     transform: scale(1.025);
   }
 }
+.navigation-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  position: relative;
+}
+.navigation-progress {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0;
+}
+.navigation-progress.is-pending {
+  opacity: 1;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+.navigation a[aria-current="page"] {
+  font-weight: 700;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .navigation-progress.is-pending {
+    animation: nav-pulse 0.8s ease-in-out infinite;
+  }
+  @keyframes nav-pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+}

@@ -4,6 +4,7 @@ import { requireAdmin } from "@/lib/admin/auth";
 import type { ReactNode } from "react";
 import { SubmitButton } from "./submit";
 import { FieldError } from "./saved-form";
+import { AdminNavigationMenu } from "./navigation-menu";
 const sections = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/albums", label: "Photo albums", capability: "publish_pages" },
@@ -24,7 +25,7 @@ const sections = [
   { href: "/admin/events", label: "Events", capability: "publish_pages" },
   {
     href: "/admin/announcements",
-    label: "Announcements",
+    label: "Updates",
     capability: "edit_posts",
   },
   { href: "/admin/resources", label: "Resources", capability: "publish_pages" },
@@ -45,25 +46,27 @@ export async function AdminShell({
     <div className="container admin-shell">
       <aside className="admin-sidebar">
         <p className="eyebrow">Council workspace</p>
-        <nav aria-label="Dashboard">
-          {sections.map((item) =>
-            item.capability && !user.capabilities[item.capability] ? (
-              <span
-                key={item.href}
-                className="admin-restricted"
-                aria-disabled="true"
-              >
-                {item.label} <small>Permission needed</small>
-              </span>
-            ) : (
-              <AdminNavLink
-                href={item.href}
-                key={item.href}
-                label={item.label}
-              />
-            ),
-          )}
-        </nav>
+        <AdminNavigationMenu items={sections}>
+          <nav aria-label="Dashboard">
+            {sections.map((item) =>
+              item.capability && !user.capabilities[item.capability] ? (
+                <span
+                  key={item.href}
+                  className="admin-restricted"
+                  aria-disabled="true"
+                >
+                  {item.label} <small>Permission needed</small>
+                </span>
+              ) : (
+                <AdminNavLink
+                  href={item.href}
+                  key={item.href}
+                  label={item.label}
+                />
+              ),
+            )}
+          </nav>
+        </AdminNavigationMenu>
         <div className="admin-identity">
           <strong>{user.name}</strong>
           <span>{user.roles.join(", ")}</span>

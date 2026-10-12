@@ -6,6 +6,12 @@ The optional `/admin` workspace provides forms for officers, events, announcemen
 
 Use the SMU WordPress dashboard you already administer. The frontend never needs your login credentials. Publish updates normally; cached frontend content refreshes on requests after roughly five minutes. Verify both the WordPress page and the frontend after editing.
 
+## Events and announcements
+
+Create each item once through **Create update**. Select **This is an event** for activities with a date, location, and registration; leave it off for council news, opportunities, and other general announcements. Event posts remain editable in **Updates**. The public Events list is their primary destination. Homepage and Announcements lists suppress a linked event promotion only when its event is actually available. Legacy promotions require the same title and flyer within 90 days before the event. Recaps, unrelated updates, and original detail URLs remain available; nothing is deleted or changed in the CMS by this display rule.
+
+The header offers Home, Events, Announcements, People, Photos, Resources, About, and Contact. The mobile menu closes on selection, outside taps, and Escape. Dashboard navigation collapses to a labeled menu on phones, and dashboard routes prefetch on deliberate hover or keyboard focus with loading feedback.
+
 ## Officers
 
 The existing `officers` page works through a legacy WPBakery adapter. Keep role headings ending in a colon, names followed by their parenthesized email, and the officer's photo immediately before that role's section. Editing names, biographies, contact links, and photos in WordPress updates the frontend. Do not add HTML or React code to the frontend.

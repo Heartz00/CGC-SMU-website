@@ -24,8 +24,8 @@ export default async function Events({
     >
       <Notice kind={notice} />
       <p>
-        <Link className="button" href="/admin/publish">
-          Create event & announcement
+        <Link className="button" href="/admin/publish?type=event">
+          Create an event
         </Link>
       </p>
       <p>

@@ -226,8 +226,12 @@ export function PublishForm({
               disabled={!canCalendar}
               onChange={(event) => setCalendar(event.target.checked)}
             />
-            <span>Also show in Upcoming Events</span>
+            <span>This is an event (add dates and location)</span>
           </label>
+          <small>
+            Events appear on the calendar. General updates appear in
+            Announcements. Create each update once.
+          </small>
           {calendar && (
             <div className="admin-fields">
               <LocalDate
