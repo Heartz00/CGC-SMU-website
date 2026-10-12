@@ -37,6 +37,11 @@ import type { PublishResult } from "@/lib/admin/publishing";
 import { publishRecord } from "@/lib/admin/publish-service";
 import { saveFailure, type SaveResult } from "@/lib/admin/save-result";
 import { recordErrors } from "@/lib/admin/record-errors";
+import { publicationDate } from "@/lib/admin/scheduling";
+import { albumTable, type AlbumPhoto } from "@/lib/content/albums";
+import { wordpressImage } from "@/lib/content/flyer";
+import { restoreVersion, type Revision } from "@/lib/admin/revisions";
+import { saveAttendanceRecord } from "@/lib/admin/attendance";
 import { undoCouncilArchive } from "@/lib/admin/council-archive";
 import { addPastCouncil } from "@/lib/admin/past-council";
 import { homeSettingsTable } from "@/lib/content/home-settings";
@@ -119,6 +124,122 @@ function refreshContent() {
   revalidatePath("/events/[slug]", "page");
   revalidatePath("/resources/[slug]", "page");
   revalidatePath("/executive-committee/history");
+  revalidatePath("/photos");
+}
+export async function saveAlbums(form: FormData): Promise<SaveResult> {
+  const access = await saveAccess("publish_pages");
+  if (!access.ok) return access.result;
+  try {
+    await sameOrigin();
+    const albums = form.getAll("album");
+    if (albums.length > 100)
+      throw new AdminError("validation", "Maximum 100 album photos.");
+    const photos: AlbumPhoto[] = albums.map((_, i) => {
+      const get = (name: string) => {
+        const v = form.getAll(name)[i];
+        if (typeof v !== "string" || v.length > (name === "photo" ? 1000 : 300))
+          throw new AdminError("validation", "Check the photo fields.");
+        return v.trim();
+      };
+      const album = get("album"),
+        url = wordpressImage(get("photo")),
+        alt = get("alt"),
+        date = get("date");
+      if (!album || !url || !alt || (date && !validTermDate(date)))
+        throw new AdminError(
+          "validation",
+          `Photo ${i + 1} needs an album, library image, description, and valid date if provided.`,
+        );
+      return { album, url, alt, date, caption: get("caption") };
+    });
+    const saved = await savePage(
+      access.auth.session,
+      "cgc-photo-albums",
+      "CGC Photo Albums",
+      albumTable(photos),
+      textField(form, "version", 80),
+    );
+    refreshContent();
+    return {
+      success: true,
+      message: "Albums saved.",
+      version: saved.modified_gmt,
+      links: [{ href: "/photos", label: "View photo albums" }],
+    };
+  } catch (error) {
+    return saveFailure(error);
+  }
+}
+export async function restoreRevision(form: FormData): Promise<SaveResult> {
+  const kind = String(form.get("kind"));
+  if (!["pages", "posts"].includes(kind))
+    return { message: "Choose a valid record." };
+  const access = await saveAccess(
+    kind === "pages" ? "edit_pages" : "edit_posts",
+  );
+  if (!access.ok) return access.result;
+  try {
+    await sameOrigin();
+    if (form.get("confirm") !== "on")
+      throw new AdminError(
+        "validation",
+        "Confirm the version before restoring.",
+      );
+    const id = textField(form, "id", 20),
+      revision = textField(form, "revision", 20);
+    if (!/^[1-9]\d*$/.test(id) || !/^[1-9]\d*$/.test(revision))
+      throw new AdminError("validation", "Invalid record.");
+    const [current, version] = await Promise.all([
+      wordpressRequest<EditablePost>(access.auth.session, `${kind}/${id}`, {
+        query: { context: "edit" },
+      }),
+      wordpressRequest<Revision>(
+        access.auth.session,
+        `${kind}/${id}/revisions/${revision}`,
+        { query: { context: "edit" } },
+      ),
+    ]);
+    const saved = await restoreVersion(
+      Number(id),
+      textField(form, "version", 80),
+      version,
+      current,
+      (body) =>
+        wordpressRequest<EditablePost>(access.auth.session, `${kind}/${id}`, {
+          method: "POST",
+          body,
+        }),
+    );
+    refreshContent();
+    revalidatePath("/admin/history");
+    revalidatePath(`/admin/history/${kind}/${id}`);
+    return {
+      success: true,
+      message:
+        kind === "posts"
+          ? "Version restored. Review any linked calendar entry separately."
+          : "Version restored.",
+      version: saved.modified_gmt,
+    };
+  } catch (error) {
+    return saveFailure(error);
+  }
+}
+export async function saveAttendance(form: FormData): Promise<SaveResult> {
+  const access = await saveAccess("publish_pages");
+  if (!access.ok) return access.result;
+  try {
+    await sameOrigin();
+    const saved = await saveAttendanceRecord(access.auth.session, form);
+    revalidatePath("/admin/attendance");
+    return {
+      success: true,
+      message: "Counts saved.",
+      version: saved.modified_gmt,
+    };
+  } catch (error) {
+    return saveFailure(error);
+  }
 }
 export async function saveHomeSettings(form: FormData): Promise<SaveResult> {
   const access = await saveAccess("publish_pages");
@@ -128,6 +249,12 @@ export async function saveHomeSettings(form: FormData): Promise<SaveResult> {
     const featuredEvent = textField(form, "featuredEvent", 150),
       rawPost = textField(form, "featuredAnnouncement", 20);
     const featuredAnnouncement = rawPost ? Number(rawPost) : undefined;
+    const featuredUntil = String(form.get("featuredUntil") || "");
+    if (featuredUntil && !validTermDate(featuredUntil))
+      return {
+        message: "Choose a valid feature expiry date.",
+        fields: { featuredUntil: "Choose a valid date." },
+      };
     const [events, news] = await Promise.all([getEvents(), getAnnouncements()]);
     if (
       featuredEvent &&
@@ -160,6 +287,7 @@ export async function saveHomeSettings(form: FormData): Promise<SaveResult> {
       homeSettingsTable({
         featuredEvent: featuredEvent || undefined,
         featuredAnnouncement,
+        featuredUntil: featuredUntil || undefined,
       }),
       textField(form, "version", 80),
     );
@@ -466,9 +594,16 @@ export async function saveAnnouncement(form: FormData): Promise<SaveResult> {
     const status = textField(form, "status", 10);
     const flyer = textField(form, "flyer", 1000);
     const registration = textField(form, "registration", 1000);
-    if (status === "publish" && !user.capabilities.publish_posts)
+    const date_gmt = publicationDate(
+      status,
+      String(form.get("publishAt") || ""),
+    );
+    if (
+      ["publish", "future"].includes(status) &&
+      !user.capabilities.publish_posts
+    )
       throw new AdminError("permission", "Publishing permission is required.");
-    if (!title || !body || !["draft", "publish"].includes(status))
+    if (!title || !body || !["draft", "publish", "future"].includes(status))
       throw new AdminError(
         "validation",
         "Check title, body, and publishing permission.",
@@ -507,6 +642,7 @@ export async function saveAnnouncement(form: FormData): Promise<SaveResult> {
         body: {
           title,
           status,
+          ...(date_gmt ? { date_gmt } : {}),
           content: announcementContent(
             content ||
               announcementParts(current.content.raw || current.content.rendered)
@@ -523,6 +659,7 @@ export async function saveAnnouncement(form: FormData): Promise<SaveResult> {
         body: {
           title,
           status,
+          ...(date_gmt ? { date_gmt } : {}),
           content: announcementContent(
             plainParagraphs(body),
             flyer,
@@ -534,7 +671,12 @@ export async function saveAnnouncement(form: FormData): Promise<SaveResult> {
     refreshContent();
     return {
       success: true,
-      message: status === "draft" ? "Draft saved." : "Published.",
+      message:
+        status === "future"
+          ? "Scheduled."
+          : status === "draft"
+            ? "Draft saved."
+            : "Published.",
       version: saved.modified_gmt,
       postId: saved.id,
       links:

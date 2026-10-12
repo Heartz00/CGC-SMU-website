@@ -23,7 +23,13 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
           openGraph: {
             title: event.title,
             description: event.description.slice(0, 160),
-            ...(event.flyer ? { images: [event.flyer] } : {}),
+            images: [`/share/events/${eventSlug(event)}`],
+          },
+          twitter: {
+            card: "summary_large_image",
+            title: event.title,
+            description: event.description.slice(0, 160),
+            images: [`/share/events/${eventSlug(event)}`],
           },
         }
       : {}),

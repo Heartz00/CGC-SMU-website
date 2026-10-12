@@ -44,6 +44,20 @@ Start must be an ISO timestamp with `Z` or an explicit offset. Dallas uses `-05:
 
 Create or edit ordinary WordPress Posts and publish. The app shows the latest twelve posts and individual detail pages. Original publication dates are retained. Never change an old post date merely to make an old activity appear upcoming.
 
+The dashboard supports **Schedule publication** with a Dallas-local date/time. Scheduled posts stay private until the source CMS publishes them; its scheduling service and the frontend cache determine when they become visible. Combined scheduled updates retain their event metadata without creating a public calendar row early. Published linked events are read from the newest 100 posts, with managed calendar records taking precedence. Existing date-based homepage event expiry remains automatic; Homepage now offers an optional **Feature announcement through** date, inclusive through that day in Dallas.
+
+## Photo albums and turnout
+
+Use **Photo albums** to group up to 100 library images by album name. Add a caption, optional event date, and required image description. The public `/photos` page supports album filters and full-image links. Images remain in the media library when removed from an album.
+
+Use **Registration & attendance** for manual totals from the organizer dashboard. Blank means not entered, while zero is a recorded total. Data is saved to the private `cgc-event-attendance` page and never included in public calendar content. Historical tracked events remain available after leaving the calendar window. No names, registration records, or automatic provider connection are stored.
+
+## Activity history and recovery
+
+**Activity & history** lists the latest 30 editable records of each type. Open a record to see its newest 50 stored revisions, edit author and time, and content preview. Author IDs appear if a name cannot be retrieved. Restore requires confirmation and a matching current version. Restoration changes title/content only; it keeps publication status and dates, including private records. Restore a linked calendar entry separately when reverting an announcement. The CMS controls revision retention; uploads, sign-ins and access changes are not a full audit log here.
+
+Announcements and event links now have generated 1200 × 630 social cards. Social platforms may cache older previews. Metadata uses `SITE_URL` when configured, otherwise Vercel's production-domain variable.
+
 ## Resources and documents
 
 Edit these existing pages in WordPress:

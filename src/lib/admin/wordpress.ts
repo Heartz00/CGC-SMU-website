@@ -12,6 +12,7 @@ export type WordPressUser = {
   capabilities: Record<string, boolean>;
 };
 export type EditablePost = {
+  date_gmt?: string;
   id: number;
   slug: string;
   status: string;
@@ -24,7 +25,11 @@ export function adminEndpoint(
   resource: string,
   query: Record<string, string> = {},
 ): URL {
-  if (!/^(?:users\/me|users|posts|pages|media)(?:\/\d+)?$/.test(resource))
+  if (
+    !/^(?:(?:users\/me|users|posts|pages|media)(?:\/\d+)?|(?:posts|pages)\/\d+\/revisions(?:\/\d+)?)$/.test(
+      resource,
+    )
+  )
     throw new AdminError("validation", "Unsupported content endpoint.");
   const base =
     process.env.WORDPRESS_API_URL ||
@@ -126,7 +131,7 @@ export async function editablePage(session: AdminSession, slug: string) {
       slug,
       context: "edit",
       per_page: "1",
-      status: "publish,draft,pending,private",
+      status: "publish,draft,pending,private,future",
     },
   });
   return pages[0] || null;

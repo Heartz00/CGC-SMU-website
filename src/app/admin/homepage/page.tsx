@@ -74,6 +74,14 @@ export default async function Homepage() {
           </select>
           <FieldError name="featuredAnnouncement" />
         </label>
+        <label className="admin-field">
+          <span>Feature announcement through (optional)</span>
+          <input
+            name="featuredUntil"
+            type="date"
+            defaultValue={settings.featuredUntil || ""}
+          />
+        </label>
         <SubmitButton />
         <p className="admin-note">
           Past events and unavailable posts are automatically replaced with

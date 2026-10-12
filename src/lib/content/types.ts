@@ -23,6 +23,7 @@ export type CouncilEvent = {
   allDay?: boolean;
 };
 export type Announcement = {
+  linkedEvent?: CouncilEvent;
   historical?: boolean;
   flyer?: string;
   flyerAlt?: string;

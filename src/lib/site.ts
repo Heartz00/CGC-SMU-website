@@ -13,6 +13,7 @@ export const site = {
     "Community, connection, and resources for chemistry graduate students at Southern Methodist University.",
 };
 export const navigation = [
+  { href: "/photos", label: "Photos" },
   { href: "/about", label: "About" },
   { href: "/executive-committee", label: "Our people" },
   { href: "/events", label: "Events" },

@@ -13,6 +13,7 @@ import {
   getOfficerMedia,
   getWordPressPage,
   getWordPressPosts,
+  getLinkedPostEvents,
 } from "./wordpress";
 import type {
   Announcement,
@@ -90,9 +91,19 @@ export async function getEvents(): Promise<ContentResult<CouncilEvent>> {
       } catch {
         unavailable = true;
       }
+      let announced: CouncilEvent[] = [];
+      try {
+        announced = await getLinkedPostEvents();
+      } catch {
+        unavailable = true;
+      }
+      const managed = html !== null ? parseEvents(html) : [];
       const combined = [
-        ...(html !== null ? parseEvents(html) : []),
         ...calendar,
+        ...announced.filter(
+          (event) => !managed.some((item) => item.id === event.id),
+        ),
+        ...managed,
       ];
       const unique = new Map<string, CouncilEvent>();
       combined.forEach((event) =>

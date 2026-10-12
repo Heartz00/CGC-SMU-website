@@ -42,6 +42,10 @@ export default async function Publish({
           postId: post?.id,
           version: post?.modified_gmt,
           status: post?.status,
+          publishAt:
+            post?.status === "future" && post.date_gmt
+              ? `${post.date_gmt}Z`
+              : undefined,
         }}
         canPublish={!!user.capabilities.publish_posts}
         canCalendar={!!user.capabilities.publish_pages}

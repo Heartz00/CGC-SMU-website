@@ -14,7 +14,7 @@ export default async function Announcements({
   const posts = await wordpressRequest<EditablePost[]>(session, "posts", {
     query: {
       context: "edit",
-      status: draftsOnly ? "draft" : "publish,draft,pending",
+      status: draftsOnly ? "draft" : "publish,draft,pending,future",
       per_page: "30",
     },
   });

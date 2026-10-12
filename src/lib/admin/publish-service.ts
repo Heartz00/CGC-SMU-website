@@ -25,6 +25,7 @@ import {
 import { parseEvents, safeUrl, validDate } from "../content/adapters";
 import { wordpressImage } from "../content/flyer";
 import { eventPath } from "../content/event-links";
+import { publicationDate } from "./scheduling";
 function dateLabel(value: string) {
   return (
     new Intl.DateTimeFormat("en-US", {
@@ -47,6 +48,10 @@ export async function publishRecord(
     const title = textField(form, "title", 200);
     const body = textField(form, "body", 50000);
     const status = textField(form, "status", 10);
+    const date_gmt = publicationDate(
+      status,
+      String(form.get("publishAt") || ""),
+    );
     const flyer = textField(form, "flyer", 1000);
     const registration = textField(form, "registration", 1000);
     const calendar = form.get("calendar") === "on";
@@ -73,10 +78,10 @@ export async function publishRecord(
         "validation",
         "Check the marked fields. Your entries are kept.",
       );
-    if (!title || !body || !["draft", "publish"].includes(status))
+    if (!title || !body || !["draft", "publish", "future"].includes(status))
       throw new AdminError("validation", "Add a title and description.");
     if (
-      status === "publish" &&
+      ["publish", "future"].includes(status) &&
       (!user.capabilities.publish_posts ||
         (calendar && !user.capabilities.publish_pages))
     )
@@ -143,7 +148,10 @@ export async function publishRecord(
     saved = await wordpressRequest<EditablePost>(
       session,
       id ? `posts/${id}` : "posts",
-      { method: "POST", body: { title, content, status } },
+      {
+        method: "POST",
+        body: { title, content, status, ...(date_gmt ? { date_gmt } : {}) },
+      },
     );
     if (
       (event && status === "publish") ||
@@ -174,11 +182,13 @@ export async function publishRecord(
     }
     return {
       message:
-        status === "draft"
-          ? "Draft saved."
-          : event
-            ? "Announcement and event published."
-            : "Published.",
+        status === "future"
+          ? "Scheduled. Calendar details will appear after publication."
+          : status === "draft"
+            ? "Draft saved."
+            : event
+              ? "Announcement and event published."
+              : "Published.",
       success: true,
       postId: saved.id,
       version: saved.modified_gmt,

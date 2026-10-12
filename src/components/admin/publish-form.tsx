@@ -2,6 +2,7 @@
 import { useActionState, useEffect, useRef, useState } from "react";
 import { publishUpdate } from "@/app/admin/actions";
 import { ImagePicker } from "./image-picker";
+import { PublishingSchedule } from "./publishing-schedule";
 import { EventCard } from "@/components/content";
 import { Flyer } from "@/components/flyer";
 import { dallasLocalTime, dallasToIso } from "@/lib/admin/date-time";
@@ -16,6 +17,7 @@ type Initial = {
   postId?: number;
   version?: string;
   status?: string;
+  publishAt?: string;
 };
 export function PublishForm({
   initial,
@@ -34,7 +36,13 @@ export function PublishForm({
   const form = useRef<HTMLFormElement>(null);
   const [calendar, setCalendar] = useState(!!initial.event);
   const [dirty, setDirty] = useState(false);
-  const [publishing, setPublishing] = useState(initial.status === "publish");
+  const [publishing, setPublishing] = useState(
+    initial.status === "future"
+      ? "future"
+      : initial.status === "publish"
+        ? "publish"
+        : "draft",
+  );
   const [fieldError, setFieldError] = useState("");
   const [title, setTitle] = useState(initial.title);
   const [body, setBody] = useState(initial.body);
@@ -233,21 +241,27 @@ export function PublishForm({
           <span>Publishing</span>
           <select
             name="status"
-            value={publishing ? "publish" : "draft"}
-            onChange={(event) =>
-              setPublishing(event.target.value === "publish")
-            }
+            value={publishing}
+            onChange={(event) => setPublishing(event.target.value)}
           >
             <option value="draft">Save draft</option>
             {canPublish && <option value="publish">Publish</option>}
+            {canPublish && <option value="future">Schedule publication</option>}
           </select>
         </label>
+        <PublishingSchedule initial={initial.publishAt} />
         <div className="admin-form-actions">
           <button type="button" className="admin-secondary" onClick={preview}>
             Preview
           </button>
           <button type="submit" className="button" disabled={pending}>
-            {pending ? "Saving…" : publishing ? "Publish update" : "Save draft"}
+            {pending
+              ? "Saving…"
+              : publishing === "future"
+                ? "Schedule update"
+                : publishing === "publish"
+                  ? "Publish update"
+                  : "Save draft"}
           </button>
           <span role="status">
             {pending ? "Saving…" : dirty ? "Unsaved changes" : state.message}

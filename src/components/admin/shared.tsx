@@ -6,6 +6,13 @@ import { SubmitButton } from "./submit";
 import { FieldError } from "./saved-form";
 const sections = [
   { href: "/admin", label: "Overview" },
+  { href: "/admin/albums", label: "Photo albums", capability: "publish_pages" },
+  { href: "/admin/history", label: "Activity & history" },
+  {
+    href: "/admin/attendance",
+    label: "Registration & attendance",
+    capability: "publish_pages",
+  },
   { href: "/admin/homepage", label: "Homepage", capability: "publish_pages" },
   {
     href: "/admin/handover",

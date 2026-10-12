@@ -13,7 +13,26 @@ async function postFor(props: Props) {
 }
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const post = await postFor(props);
-  return { title: post?.title || "Announcement", description: post?.excerpt };
+  return {
+    title: post?.title || "Announcement",
+    description: post?.excerpt,
+    ...(post
+      ? {
+          alternates: { canonical: `/news/${post.slug}` },
+          openGraph: {
+            title: post.title,
+            description: post.excerpt,
+            images: [`/share/news/${post.slug}`],
+          },
+          twitter: {
+            card: "summary_large_image",
+            title: post.title,
+            description: post.excerpt,
+            images: [`/share/news/${post.slug}`],
+          },
+        }
+      : {}),
+  };
 }
 export default async function Post(props: Props) {
   const post = await postFor(props);

@@ -5,7 +5,7 @@ October 11, 2026, Windows, Node 24.11.0, Next.js 16.4.0.
 - TypeScript check passed.
 - ESLint passed.
 - Prettier formatting check passed.
-- All 43 tests passed, including event-status persistence, stable cancellation UIDs, portrait framing in current and historical rosters, and the previous authentication/content/publishing checks.
+- All 50 tests passed, including album escaping and image validation, scheduled publication/privacy, Dallas pin expiry, private attendance writes, zero/invalid count handling, revision parent/version safeguards, and the previous content/authentication/publishing checks.
 - Production build passed, including the new composer, using an isolated copy and the webpack build option so the active development server remained available. That copy contained no account credentials.
 - HTTP smoke checks passed for all public pages, the October 2024 news detail, and all four resource details. An unknown route returned 404. Each rendered page had one main heading and no surviving WPBakery shortcodes.
 - Real headless Chrome checks at 1440px, 390px, and 320px confirmed loaded CSS, layouts without horizontal overflow, mobile menu open/close behavior, and Escape returning focus to the menu button.
@@ -22,6 +22,10 @@ October 11, 2026, Windows, Node 24.11.0, Next.js 16.4.0.
 See [launch review](LAUNCH_REVIEW.md) for the remaining live account, hosting rate-limit, and representative-device checks. The fixture's NCW content is local only; no announcement or event was published by these checks.
 
 ## Dashboard activation review
+
+Management browser fixtures passed gallery/form reflow at 1440px, 720px, 390px and 320px, keyboard selection of scheduled publishing, Dallas timestamp submission, saved album descriptions, accessible image/control names in Chrome's full accessibility tree, and Axe WCAG 2/2.1 A/AA checks. The narrow widths cover zoom-equivalent reflow; this is not a physical screen-reader certification. New production Photos, Events and News pages passed the same widths and keyboard skip navigation. Anonymous requests to Albums, Attendance, History and a record's revisions redirected to sign-in.
+
+The generated event social card returned a 1200 × 630 PNG and was visually inspected for readable, uncropped text. Authenticated revision restoration and scheduling behavior are exercised against mocked APIs; live retention settings, scheduled-job reliability and real-user assistive-technology testing remain account/device checks. No album, count or revision was changed on the live CMS by development tools.
 
 New browser checks verified text search, category filters and empty results, unsaved-change warnings for refresh and same-tab links, and clearing the warning after a successful save. Record previews still pass at 1440px, 390px and 320px. These fixtures stub saves and do not modify live content. Analytics integration remains disabled pending project activation and the production environment flag.
 

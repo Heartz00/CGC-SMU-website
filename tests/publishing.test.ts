@@ -114,6 +114,24 @@ function backend() {
     },
   };
 }
+test("scheduled combined updates remain unpublished and do not create a live calendar row", async () => {
+  const original = global.fetch,
+    store = backend();
+  global.fetch = store.fetchMock;
+  try {
+    const data = form();
+    data.set("status", "future");
+    data.set("publishAt", new Date(Date.now() + 86400000).toISOString());
+    const result = await publishRecord(session, user, { message: "" }, data);
+    assert.equal(result.success, true);
+    assert.equal(store.posts.get(result.postId!)?.status, "future");
+    assert.equal(store.page, undefined);
+    assert.equal(result.eventSaved, false);
+    assert.ok(eventDraft(store.posts.get(result.postId!)!.content.raw));
+  } finally {
+    global.fetch = original;
+  }
+});
 test("combined draft stays private, retains event fields, and removes metadata from public content", async () => {
   const original = global.fetch,
     store = backend();

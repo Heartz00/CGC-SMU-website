@@ -6,8 +6,13 @@ import "./globals.css";
 import "./modern.css";
 
 export const metadata: Metadata = {
-  ...(process.env.SITE_URL
-    ? { metadataBase: new URL(process.env.SITE_URL) }
+  ...(process.env.SITE_URL || process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? {
+        metadataBase: new URL(
+          process.env.SITE_URL ||
+            `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`,
+        ),
+      }
     : {}),
   title: {
     default: "Chemistry Graduate Council | SMU",

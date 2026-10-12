@@ -16,6 +16,7 @@ import { ImagePicker } from "@/components/admin/image-picker";
 import { announcementParts } from "@/lib/content/flyer";
 import { ncwTemplate } from "@/lib/admin/event-template";
 import { RecordPreview } from "@/components/admin/record-preview";
+import { PublishingSchedule } from "@/components/admin/publishing-schedule";
 export default async function Announcement({
   params,
   searchParams,
@@ -91,14 +92,30 @@ export default async function Announcement({
           <span>Publishing</span>
           <select
             name="status"
-            defaultValue={post?.status === "publish" ? "publish" : "draft"}
+            defaultValue={
+              post?.status === "future"
+                ? "future"
+                : post?.status === "publish"
+                  ? "publish"
+                  : "draft"
+            }
           >
             <option value="draft">Save as draft</option>
             {user.capabilities.publish_posts && (
               <option value="publish">Publish publicly</option>
             )}
+            {user.capabilities.publish_posts && (
+              <option value="future">Schedule publication</option>
+            )}
           </select>
         </label>
+        <PublishingSchedule
+          initial={
+            post?.status === "future" && post.date_gmt
+              ? `${post.date_gmt}Z`
+              : ""
+          }
+        />
         <SubmitButton />
         <RecordPreview kind="announcement" />
       </SavedForm>

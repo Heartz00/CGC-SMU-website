@@ -244,6 +244,32 @@ em {
   color: #9d1735;
   font-weight: 650;
 }
+.album-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px;
+}
+.album-photo {
+  margin: 0;
+  border: 1px solid var(--line);
+  background: white;
+}
+.album-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: contain;
+}
+.album-photo figcaption {
+  padding: 22px;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 640px) {
+  .album-grid {
+    grid-template-columns: 1fr;
+  }
+}
 .event-card > .event-flyer {
   margin: 0;
 }

@@ -1,4 +1,5 @@
 import "server-only";
+import { eventDraft } from "../admin/publishing";
 import { cache } from "react";
 import { cleanHtml, parseCalendarEvent, plainText, safeUrl } from "./adapters";
 import type { Announcement, CouncilEvent } from "./types";
@@ -93,8 +94,10 @@ export const getWordPressPage = cache(async (slug: string) => {
 });
 function normalize(post: WordPressPost): Announcement {
   const parts = announcementParts(post.content.rendered);
+  const linked = eventDraft(post.content.rendered);
   return {
     id: post.id,
+    ...(linked ? { linkedEvent: { ...linked, id: `post-${post.id}` } } : {}),
     historical: Date.parse(post.date) < Date.now() - 365 * 24 * 60 * 60 * 1000,
     slug: post.slug,
     title: plainText(post.title.rendered),
@@ -112,6 +115,14 @@ export const getWordPressPosts = cache(async () =>
   (
     await request("posts", { per_page: "12", orderby: "date", order: "desc" })
   ).map(normalize),
+);
+export const getLinkedPostEvents = cache(async () =>
+  (
+    await request("posts", { per_page: "100", orderby: "date", order: "desc" })
+  ).flatMap((post) => {
+    const event = eventDraft(post.content.rendered);
+    return event ? [{ ...event, id: `post-${post.id}` }] : [];
+  }),
 );
 export const getWordPressPost = cache(async (slug: string) => {
   const posts = await request("posts", { slug, per_page: "1" });
