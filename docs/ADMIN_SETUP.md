@@ -37,6 +37,10 @@ If Application Passwords is missing from your profile, stop at that step and ask
 
 ## Content workflows
 
+### Hosted sign-in unavailable
+
+If `/admin/login` shows **Sign-in is unavailable**, the deployed server has admin disabled or a missing/invalid session key. Local `.env.local` settings do not transfer to Vercel. In the **cgc-smu-websites** project, open **Settings → Environment Variables** and set `ADMIN_ENABLED` to exactly `true` and `ADMIN_SESSION_SECRET` to a generated base64 32-byte key (44 characters, ending in `=`). Select **Production**; select **Preview** too if you use preview deployments. Save and redeploy the latest commit. Enter values without surrounding quotes. Keep the key private and do not use a `NEXT_PUBLIC_` prefix. Changing the key signs out existing sessions. Once configured, the username and application-password fields appear.
+
 - **Officers:** the dashboard initializes from the existing published roster, then saves a dedicated `cgc-officers` WordPress page using a native table. The frontend prefers that page when present. The old `officers` page is preserved. Edit the managed page through either this dashboard or the documented WordPress table format.
 - **Events:** form-created events save to the configured `events` WordPress page. They appear alongside existing Calendar+ entries. Calendar+ entries retain their original editor; they are not silently rewritten through incomplete plugin APIs. Date/time pickers use Dallas local time and store the timezone automatically. Nonexistent spring-transition times are rejected; the repeated autumn hour defaults to its later standard-time occurrence.
 - **Announcements:** create normal WordPress Posts, save drafts, or publish. Updating existing body text requires confirming conversion to simple paragraphs. Unchanged bodies preserve their original rich content. This first version is a plain-text editor; use WordPress for embeds and richer formatting.
