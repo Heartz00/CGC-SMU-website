@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Navigation } from "./navigation";
 import { site } from "@/lib/site";
+import { FlaskIcon } from "./flask-icon";
 
 export function Header() {
   return (
@@ -30,14 +31,11 @@ export function Header() {
             href="/"
             aria-label="Chemistry Graduate Council home"
           >
-            <Image
-              src="/brand/cgc-logo.png"
-              alt="Chemistry Graduate Council, SMU"
-              width={975}
-              height={320}
-              className="cgc-logo"
-              priority
-            />
+            <FlaskIcon />
+            <span className="header-brand-copy">
+              <strong>CGC</strong>
+              <span>Chemistry Graduate Council</span>
+            </span>
           </Link>
           <Navigation />
         </div>
