@@ -116,11 +116,12 @@ export function UploadInput() {
           />
         </div>
       )}
-      {original && !editing && (
+      {!editing && (
         <div className="admin-crop-actions">
           <button
             type="button"
             className="admin-secondary"
+            disabled={!original}
             onClick={() => {
               inputRef.current?.setCustomValidity(
                 "Apply or cancel the crop before uploading.",
@@ -130,15 +131,18 @@ export function UploadInput() {
           >
             Adjust / crop
           </button>
-          <button
-            type="button"
-            className="admin-secondary"
-            onClick={() => applyImage(original)}
-          >
-            Use original
-          </button>
+          {original && (
+            <button
+              type="button"
+              className="admin-secondary"
+              onClick={() => applyImage(original)}
+            >
+              Use original
+            </button>
+          )}
         </div>
       )}
+      {!original && <small>Select a file above to enable Adjust / crop.</small>}
       {original && editing && (
         <ImageCropper
           file={original}
