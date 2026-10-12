@@ -575,3 +575,114 @@ button:disabled {
   min-height: 44px;
   accent-color: #354ca1;
 }
+.image-upload-dialog {
+  width: min(640px, calc(100vw - 24px));
+  max-height: calc(100dvh - 32px);
+  overflow-y: auto;
+  border: 0;
+  border-radius: 16px;
+  padding: 24px;
+  color: var(--ink);
+}
+.image-upload-dialog::backdrop {
+  background: #172033b3;
+}
+.image-upload-dialog .admin-form-actions {
+  position: static;
+  box-shadow: none;
+}
+.dialog-heading,
+.admin-submit-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dialog-heading h2 {
+  font-size: 1.6rem;
+  margin: 0;
+}
+.admin-submit-actions {
+  justify-content: flex-start;
+}
+.admin-form-fields > .admin-submit-actions {
+  position: sticky;
+  bottom: 12px;
+  z-index: 5;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 4px 24px #17203310;
+}
+.admin-save-status {
+  font-size: 0.85rem;
+  color: var(--muted);
+  min-height: 1.4em;
+}
+.admin-more-options {
+  border: 1px solid var(--line);
+  padding: 14px;
+  border-radius: 10px;
+  margin-block: 12px;
+}
+.admin-more-options > summary {
+  cursor: pointer;
+  font-weight: 600;
+  min-height: 30px;
+}
+.admin-more-options[open] > summary {
+  margin-bottom: 16px;
+}
+.admin-draft-recovery:has(button) {
+  background: #edf2fc;
+  padding: 16px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+}
+.admin-media-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+  gap: 20px;
+}
+.admin-media-grid article {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  min-width: 0;
+}
+.admin-media-grid img {
+  width: 100%;
+  height: 160px;
+  object-fit: contain;
+  background: #f3f5f8;
+  border-radius: 8px;
+}
+.admin-media-grid input {
+  width: 100%;
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .image-upload-dialog {
+    padding: 18px;
+  }
+  .admin-form-actions,
+  .admin-form-fields > .admin-submit-actions {
+    bottom: max(8px, env(safe-area-inset-bottom));
+  }
+  .admin-form-actions .admin-submit-actions {
+    flex: 1;
+  }
+  .admin-submit-actions > .button {
+    flex: 1;
+    min-height: 44px;
+  }
+  .admin-editor,
+  .admin-form-fields {
+    padding-bottom: 16px;
+  }
+}

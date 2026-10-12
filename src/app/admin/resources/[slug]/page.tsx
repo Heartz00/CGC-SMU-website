@@ -19,7 +19,7 @@ export default async function Resource({
   params: Promise<{ slug: string }>;
   searchParams: Promise<{ notice?: string }>;
 }) {
-  const { session } = await requireAdmin("publish_pages");
+  const { session, user } = await requireAdmin("publish_pages");
   const { slug } = await params;
   const { notice } = await searchParams;
   const resource = resources.find((item) => item.slug === slug);
@@ -29,7 +29,11 @@ export default async function Resource({
     <AdminShell title={resource.title} description="Update this resource.">
       <Notice kind={notice} />
       {page ? (
-        <SavedForm action={saveResource} className="admin-editor">
+        <SavedForm
+          action={saveResource}
+          className="admin-editor"
+          draftKey={`cgc-draft:${user.id}:resource:${slug}`}
+        >
           <input type="hidden" name="slug" value={slug} />
           <input type="hidden" name="version" value={page.modified_gmt} />
           <TextArea

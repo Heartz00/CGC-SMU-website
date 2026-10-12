@@ -1,5 +1,7 @@
 "use client";
 import { useActionState, useEffect, useRef, useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { publishUpdate } from "@/app/admin/actions";
 import { ImagePicker } from "./image-picker";
 import { PublishingSchedule } from "./publishing-schedule";
@@ -8,6 +10,8 @@ import { Flyer } from "@/components/flyer";
 import { dallasLocalTime, dallasToIso } from "@/lib/admin/date-time";
 import type { CouncilEvent } from "@/lib/content/types";
 import type { PublishResult } from "@/lib/admin/publishing";
+import { DraftRecovery } from "./draft-recovery";
+import type { DraftFields } from "@/lib/admin/content-draft";
 type Initial = {
   title: string;
   body: string;
@@ -23,11 +27,14 @@ export function PublishForm({
   initial,
   canPublish,
   canCalendar,
+  draftKey,
 }: {
   initial: Initial;
   canPublish: boolean;
   canCalendar: boolean;
+  draftKey?: string;
 }) {
+  const router = useRouter();
   const [state, action, pending] = useActionState(publishUpdate, {
     message: "",
     postId: initial.postId,
@@ -52,6 +59,24 @@ export function PublishForm({
     (Initial & { event?: CouncilEvent }) | null
   >(null);
   const [mobile, setMobile] = useState(false);
+  const [recovered, setRecovered] = useState<DraftFields | null>(null);
+  const [savedAt, setSavedAt] = useState("");
+  useEffect(() => {
+    if (!state.success) return;
+    const frame = requestAnimationFrame(() =>
+      setSavedAt(
+        new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      ),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [state]);
+  useEffect(() => {
+    if (state.success && state.postId && !initial.postId)
+      router.replace(`/admin/publish?post=${state.postId}&saved=1`);
+  }, [state, initial.postId, router]);
   const unsaved = dirty || (!!state.message && !state.success);
   useEffect(() => {
     if (!unsaved || pending) return;
@@ -119,154 +144,203 @@ export function PublishForm({
         }}
         onInvalidCapture={(event) => {
           const input = event.target as HTMLInputElement;
+          for (
+            let parent = input.parentElement;
+            parent && parent !== event.currentTarget;
+            parent = parent.parentElement
+          ) {
+            if (parent instanceof HTMLDetailsElement) parent.open = true;
+          }
           const label =
             input.closest("label")?.querySelector("span")?.textContent ||
             "Required field";
           setFieldError(`${label}: ${input.validationMessage}`);
         }}
         className="admin-editor"
+        aria-busy={pending}
       >
-        <input type="hidden" name="postId" value={state.postId || ""} />
-        <input type="hidden" name="version" value={state.version || "new"} />
-        <label className="admin-field">
-          <span>Title</span>
-          <input
-            name="title"
-            required
-            maxLength={200}
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            aria-invalid={!!state.fields?.title}
-            aria-describedby={
-              state.fields?.title ? "publish-title-error" : undefined
-            }
+        {draftKey && (
+          <DraftRecovery
+            storageKey={draftKey}
+            form={form}
+            result={state}
+            onRestore={(fields) => {
+              setTitle(fields.title || "");
+              setBody(fields.body || "");
+              setRegistration(fields.registration || "");
+              setLocation(fields.location || "");
+              setCalendar(canCalendar && fields.calendar === "on");
+              setRecovered(fields);
+              setPublishing("draft");
+              setDirty(true);
+            }}
           />
-          {state.fields?.title && (
-            <span id="publish-title-error" className="admin-field-error">
-              {state.fields.title}
-            </span>
-          )}
-        </label>
-        <label className="admin-field">
-          <span>Description</span>
-          <textarea
-            name="body"
-            required
-            maxLength={calendar ? 5000 : 50000}
-            rows={7}
-            value={body}
-            onChange={(event) => setBody(event.target.value)}
-            aria-invalid={!!state.fields?.body}
-            aria-describedby={
-              state.fields?.body ? "publish-body-error" : undefined
-            }
-          />
-          {state.fields?.body && (
-            <span id="publish-body-error" className="admin-field-error">
-              {state.fields.body}
-            </span>
-          )}
-        </label>
-        <label className="admin-check">
-          <input
-            type="checkbox"
-            name="calendar"
-            checked={calendar}
-            disabled={!canCalendar}
-            onChange={(event) => setCalendar(event.target.checked)}
-          />
-          <span>Also show in Upcoming Events</span>
-        </label>
-        {calendar && (
-          <div className="admin-fields">
-            <LocalDate
-              name="start"
-              label="Start · Dallas time"
-              initial={initial.event?.start || ""}
+        )}
+        <fieldset className="admin-form-fields" disabled={pending}>
+          <input type="hidden" name="postId" value={state.postId || ""} />
+          <input type="hidden" name="version" value={state.version || "new"} />
+          <label className="admin-field">
+            <span>Title</span>
+            <input
+              name="title"
               required
-              error={state.fields?.start}
+              maxLength={200}
+              value={title}
+              onChange={(event) => setTitle(event.target.value)}
+              aria-invalid={!!state.fields?.title}
+              aria-describedby={
+                state.fields?.title ? "publish-title-error" : undefined
+              }
             />
-            <LocalDate
-              name="end"
-              label="End · Dallas time (optional)"
-              initial={initial.event?.end || ""}
-              error={state.fields?.end}
+            {state.fields?.title && (
+              <span id="publish-title-error" className="admin-field-error">
+                {state.fields.title}
+              </span>
+            )}
+          </label>
+          <label className="admin-field">
+            <span>Description</span>
+            <textarea
+              name="body"
+              required
+              maxLength={calendar ? 5000 : 50000}
+              rows={7}
+              value={body}
+              onChange={(event) => setBody(event.target.value)}
+              aria-invalid={!!state.fields?.body}
+              aria-describedby={
+                state.fields?.body ? "publish-body-error" : undefined
+              }
             />
-            <label className="admin-field wide">
-              <span>Location</span>
-              <input
-                name="location"
+            {state.fields?.body && (
+              <span id="publish-body-error" className="admin-field-error">
+                {state.fields.body}
+              </span>
+            )}
+          </label>
+          <label className="admin-check">
+            <input
+              type="checkbox"
+              name="calendar"
+              checked={calendar}
+              disabled={!canCalendar}
+              onChange={(event) => setCalendar(event.target.checked)}
+            />
+            <span>Also show in Upcoming Events</span>
+          </label>
+          {calendar && (
+            <div className="admin-fields">
+              <LocalDate
+                name="start"
+                label="Start · Dallas time"
+                initial={initial.event?.start || ""}
+                key={`start-${recovered?.start || "initial"}`}
+                recovered={recovered?.start}
                 required
-                maxLength={300}
-                value={location}
-                onChange={(event) => setLocation(event.target.value)}
-                aria-invalid={!!state.fields?.location}
+                error={state.fields?.start}
               />
-              {state.fields?.location && (
+              <LocalDate
+                name="end"
+                label="End · Dallas time (optional)"
+                initial={initial.event?.end || ""}
+                key={`end-${recovered?.end || "initial"}`}
+                recovered={recovered?.end}
+                error={state.fields?.end}
+              />
+              <label className="admin-field wide">
+                <span>Location</span>
+                <input
+                  name="location"
+                  required
+                  maxLength={300}
+                  value={location}
+                  onChange={(event) => setLocation(event.target.value)}
+                  aria-invalid={!!state.fields?.location}
+                />
+                {state.fields?.location && (
+                  <span className="admin-field-error">
+                    {state.fields.location}
+                  </span>
+                )}
+              </label>
+            </div>
+          )}
+          <details className="admin-more-options">
+            <summary>Image and registration (optional)</summary>
+            <div className="admin-field">
+              <span>Flyer (optional)</span>
+              <ImagePicker
+                initial={recovered?.flyer ?? initial.flyer}
+                key={recovered ? `recovered-${recovered.flyer}` : "initial"}
+                name="flyer"
+                onChange={() => setDirty(true)}
+              />
+              {state.fields?.flyer && (
+                <span className="admin-field-error">{state.fields.flyer}</span>
+              )}
+            </div>
+            <label className="admin-field">
+              <span>Registration link (optional)</span>
+              <input
+                name="registration"
+                type="url"
+                maxLength={1000}
+                value={registration}
+                onChange={(event) => setRegistration(event.target.value)}
+                aria-invalid={!!state.fields?.registration}
+              />
+              {state.fields?.registration && (
                 <span className="admin-field-error">
-                  {state.fields.location}
+                  {state.fields.registration}
                 </span>
               )}
             </label>
-          </div>
-        )}
-        <div className="admin-field">
-          <span>Flyer (optional)</span>
-          <ImagePicker
-            initial={initial.flyer}
-            name="flyer"
-            onChange={() => setDirty(true)}
-          />
-          {state.fields?.flyer && (
-            <span className="admin-field-error">{state.fields.flyer}</span>
-          )}
-        </div>
-        <label className="admin-field">
-          <span>Registration link (optional)</span>
-          <input
-            name="registration"
-            type="url"
-            maxLength={1000}
-            value={registration}
-            onChange={(event) => setRegistration(event.target.value)}
-            aria-invalid={!!state.fields?.registration}
-          />
-          {state.fields?.registration && (
-            <span className="admin-field-error">
-              {state.fields.registration}
-            </span>
-          )}
-        </label>
-        <label className="admin-field">
-          <span>Publishing</span>
-          <select
-            name="status"
-            value={publishing}
-            onChange={(event) => setPublishing(event.target.value)}
-          >
-            <option value="draft">Save draft</option>
-            {canPublish && <option value="publish">Publish</option>}
-            {canPublish && <option value="future">Schedule publication</option>}
-          </select>
-        </label>
-        <PublishingSchedule initial={initial.publishAt} />
-        <div className="admin-form-actions">
-          <button type="button" className="admin-secondary" onClick={preview}>
-            Preview
-          </button>
-          <button type="submit" className="button" disabled={pending}>
+          </details>
+          <label className="admin-field">
+            <span>Publishing</span>
+            <select
+              name="status"
+              value={publishing}
+              onChange={(event) => setPublishing(event.target.value)}
+            >
+              <option value="draft">Save draft</option>
+              {canPublish && <option value="publish">Publish</option>}
+              {canPublish && (
+                <option value="future">Schedule publication</option>
+              )}
+            </select>
+          </label>
+          <PublishingSchedule initial={initial.publishAt} />
+          <p className="admin-save-status" role="status">
             {pending
               ? "Saving…"
-              : publishing === "future"
-                ? "Schedule update"
-                : publishing === "publish"
-                  ? "Publish update"
-                  : "Save draft"}
-          </button>
-          <span role="status">
-            {pending ? "Saving…" : dirty ? "Unsaved changes" : state.message}
-          </span>
-        </div>
+              : dirty
+                ? "Unsaved changes"
+                : savedAt
+                  ? `Saved at ${savedAt}`
+                  : ""}
+          </p>
+          <div className="admin-form-actions">
+            <Link href="/admin/announcements" className="admin-secondary">
+              Cancel
+            </Link>
+            <button type="button" className="admin-secondary" onClick={preview}>
+              Preview
+            </button>
+            <button type="submit" className="button" disabled={pending}>
+              {pending
+                ? "Saving…"
+                : publishing === "future"
+                  ? "Schedule update"
+                  : publishing === "publish"
+                    ? "Publish update"
+                    : "Save draft"}
+            </button>
+            <span role="status">
+              {pending ? "Saving…" : dirty ? "Unsaved changes" : state.message}
+            </span>
+          </div>
+        </fieldset>
         {fieldError && (
           <p className="admin-notice" role="alert">
             {fieldError}
@@ -350,14 +424,18 @@ function LocalDate({
   initial,
   required,
   error,
+  recovered,
 }: {
   name: string;
   label: string;
   initial: string;
   required?: boolean;
   error?: string;
+  recovered?: string;
 }) {
-  const [local, setLocal] = useState(() => dallasLocalTime(initial));
+  const [local, setLocal] = useState(() =>
+    dallasLocalTime(recovered ?? initial),
+  );
   return (
     <label className="admin-field">
       <span>{label}</span>

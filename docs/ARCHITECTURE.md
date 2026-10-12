@@ -4,7 +4,7 @@
 
 SMU CampusPress/WordPress → public HTTPS REST endpoints → server-only data adapter → Next.js App Router server components → Vercel.
 
-Public pages use client components only for navigation and the error retry boundary. The optional `/admin` workspace adds interactive record forms and submit status. CSS supplies the visual design; no animation library, external fonts, or database is needed. The molecule illustration is native SVG.
+Public client components handle navigation, collection filters, the photo viewer, and progressive landing-page motion. The optional `/admin` workspace adds interactive forms, upload/crop dialogs, local content recovery, and save status. CSS supplies the visual design and motion; no animation library, external fonts, or extra database is needed. The molecule illustration is native SVG.
 
 ## Organization
 

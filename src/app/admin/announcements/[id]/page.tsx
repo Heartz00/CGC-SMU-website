@@ -44,7 +44,11 @@ export default async function Announcement({
       description="Write clear, simple text. Separate paragraphs with a blank line."
     >
       <Notice kind={notice} />
-      <SavedForm action={saveAnnouncement} className="admin-editor">
+      <SavedForm
+        action={saveAnnouncement}
+        className="admin-editor"
+        draftKey={`cgc-draft:${user.id}:announcement:${id}:${template || "blank"}`}
+      >
         <input type="hidden" name="id" value={post?.id || ""} />
         <input
           type="hidden"

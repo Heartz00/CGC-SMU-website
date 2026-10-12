@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
-import { AlbumCard } from "@/components/album-card";
+import { PhotoGallery } from "@/components/photo-gallery";
 import { getWordPressPage } from "@/lib/content/wordpress";
 import { parseAlbums } from "@/lib/content/albums";
 import { PageIntro } from "@/components/ui";
-import { CollectionSearch } from "@/components/collection-search";
 export const metadata: Metadata = { title: "Photo albums" };
 export const revalidate = 300;
 export default async function Photos() {
@@ -22,16 +21,7 @@ export default async function Photos() {
       </PageIntro>
       <section className="section container">
         {photos.length ? (
-          <CollectionSearch
-            label="photos"
-            className="album-grid"
-            items={photos.map((p, i) => ({
-              id: String(i),
-              text: `${p.album} ${p.caption} ${p.alt}`,
-              group: p.album,
-              content: <AlbumCard photo={p} />,
-            }))}
-          />
+          <PhotoGallery photos={photos} />
         ) : (
           <p>
             {unavailable

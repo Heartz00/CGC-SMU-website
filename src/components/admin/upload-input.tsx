@@ -3,7 +3,13 @@ import { useEffect, useRef, useState } from "react";
 import { prepareImage } from "@/lib/admin/prepare-image";
 import { FieldError, useMarkUnsaved } from "./saved-form";
 import { ImageCropper } from "./image-cropper";
-export function UploadInput() {
+export function UploadInput({
+  initialFile,
+  startEditing = false,
+}: {
+  initialFile?: File;
+  startEditing?: boolean;
+}) {
   const [message, setMessage] = useState("");
   const [preview, setPreview] = useState("");
   const [original, setOriginal] = useState<File | null>(null);
@@ -11,6 +17,18 @@ export function UploadInput() {
   const markUnsaved = useMarkUnsaved();
   const sequence = useRef(0);
   const inputRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (!initialFile || !inputRef.current) return;
+    const frame = requestAnimationFrame(() => {
+      const input = inputRef.current;
+      if (!input) return;
+      const transfer = new DataTransfer();
+      transfer.items.add(initialFile);
+      input.files = transfer.files;
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    return () => cancelAnimationFrame(frame);
+  }, [initialFile]);
   useEffect(() => {
     const form = inputRef.current?.form;
     const clear = () => {
@@ -85,6 +103,12 @@ export function UploadInput() {
               input.setCustomValidity("");
               setPreview(URL.createObjectURL(ready));
               setOriginal(ready);
+              if (startEditing) {
+                input.setCustomValidity(
+                  "Apply or cancel the crop before uploading.",
+                );
+                setEditing(true);
+              }
               setMessage(
                 `${ready.name} · ${(ready.size / 1024 / 1024).toFixed(2)} MB${ready !== file ? " · Resized automatically" : ""}`,
               );
@@ -105,7 +129,7 @@ export function UploadInput() {
         {message && <small role="status">{message}</small>}
         <FieldError name="image" />
       </label>
-      {preview && (
+      {preview && !editing && (
         <div className="admin-image-preview">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img

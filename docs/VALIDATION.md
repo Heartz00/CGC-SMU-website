@@ -1,5 +1,13 @@
 # Development validation
 
+## Latest UI/UX workflow checks
+
+The image picker supports inline upload-and-select and cropping a copy of an existing library image. The source-file endpoint requires sign-in and upload permission, looks up a media ID through the authenticated CMS API, downloads only HTTPS SMU upload URLs without forwarding credentials, rejects redirects, checks signatures, and bounds source size to 20 MB. Unit tests cover these boundaries and recovery schema/expiration/credential exclusion. All 57 tests passed.
+
+Chrome production fixtures verified new-file and existing-image cropping, automatic selection, thumbnail pagination, absence of nested forms, gallery filtering/pagination, arrow-key and swipe navigation, focus restoration, recovery after navigation, successful-save cleanup, Dallas date restoration, disabled-browser-storage feedback, and opening nested optional sections on validation errors. The landing animation is present normally and disabled under reduced-motion preferences. Fixtures use mocked uploads and saves; no live CMS writes were performed.
+
+At 320px, the public routes, fixture forms, gallery viewer, and crop dialog fit without horizontal overflow. Axe WCAG 2/2.1 A/AA checks reported no violations across the seven public/sign-in routes tested, the workflow fixture, and both open dialogs. The mobile crop dialog was also visually inspected; upload actions scroll normally inside it so they do not cover crop controls. Automated checks do not replace testing with representative devices and assistive technology.
+
 October 11, 2026, Windows, Node 24.11.0, Next.js 16.4.0.
 
 - TypeScript check passed.

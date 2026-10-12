@@ -1,7 +1,8 @@
 "use client";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { LibraryImage } from "@/lib/admin/image-types";
 import { FieldError, useMarkUnsaved } from "./saved-form";
+import { ImageUploadDialog } from "./image-upload-dialog";
 let libraryRequest: Promise<LibraryImage[]> | null = null;
 function loadImages() {
   if (!libraryRequest)
@@ -30,11 +31,23 @@ export function ImagePicker({
 }) {
   const id = useId();
   const markUnsaved = useMarkUnsaved();
+  const input = useRef<HTMLInputElement>(null);
   const [url, setUrl] = useState(initial);
   const [images, setImages] = useState<LibraryImage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [reload, setReload] = useState(0);
+  const [editor, setEditor] = useState<{ image?: LibraryImage } | null>(null);
+  const [limit, setLimit] = useState(24);
+  useEffect(() => {
+    const form = input.current?.form;
+    const restore = (event: Event) => {
+      const fields = (event as CustomEvent<Record<string, string>>).detail;
+      if (typeof fields?.[name] === "string") setUrl(fields[name]);
+    };
+    form?.addEventListener("cgc:restore", restore);
+    return () => form?.removeEventListener("cgc:restore", restore);
+  }, [name]);
   useEffect(() => {
     let active = true;
     loadImages()
@@ -60,6 +73,9 @@ export function ImagePicker({
     markUnsaved();
     setUrl(value);
     onChange?.();
+    requestAnimationFrame(() =>
+      input.current?.form?.dispatchEvent(new Event("cgc:changed")),
+    );
   }
   return (
     <div className="admin-image-picker">
@@ -113,7 +129,7 @@ export function ImagePicker({
         <details className="admin-image-gallery">
           <summary>Browse thumbnails</summary>
           <div>
-            {images.map((image) => (
+            {images.slice(0, limit).map((image) => (
               <button
                 type="button"
                 key={image.id}
@@ -133,6 +149,15 @@ export function ImagePicker({
               </button>
             ))}
           </div>
+          {images.length > limit && (
+            <button
+              type="button"
+              className="admin-secondary"
+              onClick={() => setLimit((value) => value + 24)}
+            >
+              Load more photos
+            </button>
+          )}
         </details>
       )}
       <button
@@ -147,24 +172,55 @@ export function ImagePicker({
       >
         Refresh photos
       </button>
-      <a href="/admin/media" target="_blank" rel="noopener noreferrer">
-        Upload a new photo ↗
-      </a>
-      <small>
-        After uploading, click Refresh photos. Your officer edits stay on this
-        page.
-      </small>
-      <label className="admin-field" htmlFor={`${id}-url`}>
-        <span>Selected photo URL</span>
-        <input
-          id={`${id}-url`}
-          name={name}
-          type="url"
-          value={url}
-          maxLength={1000}
-          onChange={(event) => choose(event.target.value)}
+      <button
+        type="button"
+        className="admin-secondary"
+        onClick={() => setEditor({})}
+      >
+        Upload a new photo
+      </button>
+      {selected && (
+        <button
+          type="button"
+          className="admin-secondary"
+          onClick={() => setEditor({ image: selected })}
+        >
+          Adjust / crop selected photo
+        </button>
+      )}
+      {editor && (
+        <ImageUploadDialog
+          image={editor.image}
+          onClose={() => setEditor(null)}
+          onUploaded={(image) => {
+            const item = {
+              ...image,
+              thumbnail: image.url,
+              description: image.title,
+              searchText: image.title,
+            };
+            setImages((items) => [item, ...items]);
+            choose(image.url);
+            libraryRequest = null;
+            setEditor(null);
+          }}
         />
-      </label>
+      )}
+      <details className="admin-more-options">
+        <summary>More options</summary>
+        <label className="admin-field" htmlFor={`${id}-url`}>
+          <span>Selected photo URL</span>
+          <input
+            id={`${id}-url`}
+            ref={input}
+            name={name}
+            type="url"
+            value={url}
+            maxLength={1000}
+            onChange={(event) => choose(event.target.value)}
+          />
+        </label>
+      </details>
       {url && (
         <button
           type="button"

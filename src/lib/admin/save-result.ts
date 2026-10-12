@@ -6,6 +6,7 @@ export type SaveResult = {
   version?: string;
   postId?: number;
   links?: { href: string; label: string }[];
+  image?: { id: number; url: string; title: string };
 };
 export function saveFailure(error: unknown): SaveResult {
   if (error instanceof AdminError) {

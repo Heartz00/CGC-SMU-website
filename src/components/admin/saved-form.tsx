@@ -10,9 +10,15 @@ import {
   type ReactNode,
 } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import type { SaveResult } from "@/lib/admin/save-result";
+import { DraftRecovery } from "./draft-recovery";
 const ErrorContext = createContext<Record<string, string>>({});
 const DirtyContext = createContext<() => void>(() => {});
+const EditingContext = createContext(false);
+export function useEditingForm() {
+  return useContext(EditingContext);
+}
 export function useMarkUnsaved() {
   return useContext(DirtyContext);
 }
@@ -31,20 +37,35 @@ export function SavedForm({
   children,
   className,
   clearOnSuccess = false,
+  onSaved,
+  draftKey,
+  onPendingChange,
 }: {
   action: (form: FormData) => Promise<SaveResult>;
   children: ReactNode;
   className?: string;
   clearOnSuccess?: boolean;
+  onSaved?: (result: SaveResult) => void;
+  draftKey?: string;
+  onPendingChange?: (pending: boolean) => void;
 }) {
   const form = useRef<HTMLFormElement>(null);
+  const router = useRouter();
+  const pathname = usePathname();
   const entries = useRef<FormData | null>(null);
   const dirty = useRef(false);
   const restoring = useRef(false);
+  const savedCallback = useRef(onSaved);
+  useEffect(() => {
+    savedCallback.current = onSaved;
+  }, [onSaved]);
+  const [savedAt, setSavedAt] = useState("");
+  const [edited, setEdited] = useState(false);
   useEffect(() => {
     const node = form.current;
     const changed = () => {
       dirty.current = true;
+      setEdited(true);
     };
     node?.addEventListener("cgc:changed", changed);
     const beforeUnload = (event: BeforeUnloadEvent) => {
@@ -87,7 +108,17 @@ export function SavedForm({
       if (previous.postId) data.set("id", String(previous.postId));
       entries.current = data;
       const result = await action(data);
-      if (result.success) dirty.current = false;
+      if (result.success) {
+        dirty.current = false;
+        setEdited(false);
+        setSavedAt(
+          new Date().toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+        );
+        savedCallback.current?.(result);
+      }
       return {
         ...result,
         version: result.version || previous.version,
@@ -96,6 +127,17 @@ export function SavedForm({
     },
     { message: "" } as SaveResult,
   );
+  useEffect(() => {
+    onPendingChange?.(pending);
+  }, [pending, onPendingChange]);
+  useEffect(() => {
+    if (
+      state.success &&
+      state.postId &&
+      pathname === "/admin/announcements/new"
+    )
+      router.replace(`/admin/announcements/${state.postId}?notice=saved`);
+  }, [state, pathname, router]);
   useEffect(() => {
     const node = form.current;
     if (!node || !entries.current) return;
@@ -106,6 +148,7 @@ export function SavedForm({
     const snapshot = entries.current;
     const frame = requestAnimationFrame(() => {
       restoring.current = true;
+      node.dispatchEvent(new Event("cgc:sync-start"));
       const offsets: Record<string, number> = {};
       for (const element of Array.from(node.elements)) {
         if (
@@ -177,6 +220,7 @@ export function SavedForm({
       const id = node.querySelector<HTMLInputElement>('input[name="id"]');
       if (id && state.postId) id.value = String(state.postId);
       restoring.current = false;
+      node.dispatchEvent(new Event("cgc:sync-end"));
     });
     return () => cancelAnimationFrame(frame);
   }, [state, clearOnSuccess]);
@@ -187,22 +231,32 @@ export function SavedForm({
       className={className}
       aria-busy={pending}
       onClickCapture={(event) => {
-        if ((event.target as Element).closest("[data-unsaved-change]"))
+        if ((event.target as Element).closest("[data-unsaved-change]")) {
           dirty.current = true;
+          setEdited(true);
+        }
       }}
       onSubmit={() => {
         setClientError("");
         setNativeErrors({});
       }}
       onChange={() => {
-        if (!restoring.current) dirty.current = true;
+        if (!restoring.current) {
+          dirty.current = true;
+          setEdited(true);
+        }
         setClientError("");
         setNativeErrors({});
       }}
       onInvalidCapture={(event) => {
         const field = event.target as HTMLInputElement;
-        const group = field.closest("details");
-        if (group) group.open = true;
+        for (
+          let parent = field.parentElement;
+          parent && parent !== event.currentTarget;
+          parent = parent.parentElement
+        ) {
+          if (parent instanceof HTMLDetailsElement) parent.open = true;
+        }
         const name = field.name || field.dataset.fieldName || "";
         const row = field.closest<HTMLElement>("[data-record-index]")?.dataset
           .recordIndex;
@@ -224,15 +278,58 @@ export function SavedForm({
         );
       }}
     >
+      {draftKey && (
+        <DraftRecovery
+          storageKey={draftKey}
+          form={form}
+          result={state}
+          onRestore={(fields) => {
+            const node = form.current;
+            if (!node) return;
+            for (const [name, value] of Object.entries(fields)) {
+              const element = node.elements.namedItem(name);
+              if (!(
+                element instanceof HTMLInputElement ||
+                element instanceof HTMLTextAreaElement
+              ))
+                continue;
+              Object.getOwnPropertyDescriptor(
+                element instanceof HTMLTextAreaElement
+                  ? HTMLTextAreaElement.prototype
+                  : HTMLInputElement.prototype,
+                "value",
+              )?.set?.call(element, value);
+              element.dispatchEvent(new Event("input", { bubbles: true }));
+            }
+            const status = node.querySelector<HTMLSelectElement>(
+              'select[name="status"]',
+            );
+            if (status) {
+              status.value = "draft";
+              status.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+            node.dispatchEvent(
+              new CustomEvent("cgc:restore", { detail: fields }),
+            );
+            dirty.current = true;
+            setEdited(true);
+          }}
+        />
+      )}
       <DirtyContext.Provider
         value={() => {
-          if (!restoring.current) dirty.current = true;
+          if (!restoring.current) {
+            dirty.current = true;
+            setEdited(true);
+          }
         }}
       >
         <ErrorContext.Provider value={{ ...state.fields, ...nativeErrors }}>
-          <fieldset className="admin-form-fields" disabled={pending}>
-            {children}
-          </fieldset>
+          <EditingContext.Provider value={true}>
+            <fieldset className="admin-form-fields" disabled={pending}>
+              {children}
+            </fieldset>
+          </EditingContext.Provider>
         </ErrorContext.Provider>
       </DirtyContext.Provider>
       {(clientError || state.message) && (
@@ -251,6 +348,15 @@ export function SavedForm({
           ))}
         </div>
       )}
+      <p className="admin-save-status" role="status">
+        {pending
+          ? "Saving…"
+          : edited
+            ? "Unsaved changes"
+            : savedAt
+              ? `Saved at ${savedAt}`
+              : ""}
+      </p>
     </form>
   );
 }

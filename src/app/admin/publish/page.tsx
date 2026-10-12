@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { AdminShell } from "@/components/admin/shared";
+import { AdminShell, Notice } from "@/components/admin/shared";
 import { PublishForm } from "@/components/admin/publish-form";
 import { requireAdmin } from "@/lib/admin/auth";
 import { wordpressRequest, type EditablePost } from "@/lib/admin/wordpress";
@@ -11,7 +11,7 @@ import type { CouncilEvent } from "@/lib/content/types";
 export default async function Publish({
   searchParams,
 }: {
-  searchParams: Promise<{ post?: string; template?: string }>;
+  searchParams: Promise<{ post?: string; template?: string; saved?: string }>;
 }) {
   const { session, user } = await requireAdmin("edit_posts");
   const query = await searchParams;
@@ -32,6 +32,7 @@ export default async function Publish({
       title="Share something new."
       description="Publish an announcement and event together."
     >
+      <Notice kind={query.saved === "1" ? "saved" : undefined} />
       <PublishForm
         initial={{
           title: post?.title.raw || post?.title.rendered || event?.title || "",
@@ -49,6 +50,7 @@ export default async function Publish({
         }}
         canPublish={!!user.capabilities.publish_posts}
         canCalendar={!!user.capabilities.publish_pages}
+        draftKey={`cgc-draft:${user.id}:update:${post?.id || "new"}:${query.template || "blank"}`}
       />
     </AdminShell>
   );

@@ -768,9 +768,17 @@ export async function uploadImage(form: FormData): Promise<SaveResult> {
     const body = new FormData();
     body.set("file", file, file.name.replace(/[^\w.-]/g, "_"));
     body.set("alt_text", description.trim());
-    await wordpressRequest(session, "media", { method: "POST", body });
+    const image = await wordpressRequest<{ id: number; source_url: string }>(
+      session,
+      "media",
+      { method: "POST", body },
+    );
     revalidatePath("/admin/media");
-    return { success: true, message: "Uploaded." };
+    return {
+      success: true,
+      message: "Uploaded.",
+      image: { id: image.id, url: image.source_url, title: description.trim() },
+    };
   } catch (error) {
     if (error instanceof UploadError)
       return {

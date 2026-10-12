@@ -8,6 +8,7 @@ import { site } from "@/lib/site";
 import { getHomeSettings } from "@/lib/content/council-settings";
 import { featureFirst } from "@/lib/content/home-settings";
 import { eventSlug } from "@/lib/content/event-links";
+import { LandingMotion } from "@/components/landing-motion";
 export const revalidate = 300;
 
 export default async function Home() {
@@ -29,7 +30,8 @@ export default async function Home() {
     (post) => post.id,
   );
   return (
-    <>
+    <div className="landing-page">
+      <LandingMotion />
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-copy">
@@ -205,6 +207,6 @@ export default async function Home() {
         </div>
         <ButtonLink href="/contact">Get in touch</ButtonLink>
       </section>
-    </>
+    </div>
   );
 }

@@ -5,6 +5,8 @@ import { requireAdmin } from "@/lib/admin/auth";
 import { AdminError, wordpressRequest } from "@/lib/admin/wordpress";
 import { uploadImage } from "../actions";
 import { UploadInput } from "@/components/admin/upload-input";
+import { MediaLibrary } from "@/components/admin/media-library";
+import { load } from "cheerio";
 export default async function Media({
   searchParams,
 }: {
@@ -12,8 +14,13 @@ export default async function Media({
 }) {
   const { session } = await requireAdmin("upload_files");
   const { notice } = await searchParams;
-  let media: { id: number; title: { rendered: string }; source_url: string }[] =
-    [];
+  let media: {
+    id: number;
+    title: { rendered: string };
+    source_url: string;
+    alt_text?: string;
+    media_details?: { sizes?: { thumbnail?: { source_url: string } } };
+  }[] = [];
   let libraryUnavailable = false;
   try {
     media = await wordpressRequest<typeof media>(session, "media", {
@@ -43,21 +50,18 @@ export default async function Media({
       ) : media.length === 0 ? (
         <p>No images have been uploaded yet.</p>
       ) : null}
-      <div className="admin-list">
-        {media.map((image) => (
-          <div key={image.id}>
-            <strong>{image.title.rendered}</strong>
-            <label className="admin-field">
-              <span>Image URL</span>
-              <input
-                readOnly
-                value={image.source_url}
-                aria-label={`${image.title.rendered} image URL`}
-              />
-            </label>
-          </div>
-        ))}
-      </div>
+      <MediaLibrary
+        images={media.map((image) => ({
+          id: image.id,
+          title: load(image.title.rendered).text().trim(),
+          url: image.source_url,
+          thumbnail:
+            image.media_details?.sizes?.thumbnail?.source_url ||
+            image.source_url,
+          description: image.alt_text || "",
+          searchText: image.title.rendered,
+        }))}
+      />
     </AdminShell>
   );
 }
