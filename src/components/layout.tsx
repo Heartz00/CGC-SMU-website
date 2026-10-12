@@ -74,6 +74,16 @@ export function Footer() {
         </div>
         <div>
           <h2>Stay connected</h2>
+          {site.social.map((social) => (
+            <a
+              key={social.label}
+              href={social.href}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {social.label} ↗
+            </a>
+          ))}
           <Link href="/events">Events & meetings</Link>
           <Link href="/resources">Student resources</Link>
           <a href={site.wordpress}>Council archive</a>

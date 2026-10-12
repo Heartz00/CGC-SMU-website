@@ -13,6 +13,23 @@ export default function Contact() {
       </PageIntro>
       <section className="section container contact-grid">
         <article className="contact-card">
+          <p className="eyebrow">Follow the council</p>
+          <h2>Stay connected.</h2>
+          <p>Follow our events, announcements, and graduate community.</p>
+          {site.social.map((social) => (
+            <p key={social.label}>
+              <a
+                className="text-link"
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {social.label} ↗
+              </a>
+            </p>
+          ))}
+        </article>
+        <article className="contact-card">
           <p className="eyebrow">Council questions</p>
           <h2>Connect with an officer.</h2>
           <p>
