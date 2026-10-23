@@ -1,5 +1,15 @@
 # Development validation
 
+## Student forum — October 23, 2026
+
+All 63 tests pass, including executing the forum migration in an isolated PGlite database. Checks cover unverified/non-SMU rejection, anonymous identity isolation, private-table and moderation access denial, ownership, stale edits, reporting, atomic moderation, suspension, removal, rate limits, and retry-safe posting. Lint, TypeScript, formatting, and a clean npm 10 `ci --dry-run` pass.
+
+The isolated production build passed on Node 24 / Next.js 16.4.3 using webpack. Production HTTP checks verified private/no-store and noindex headers, the disabled-forum state, unauthenticated API rejection (401), and cross-origin write rejection (403). Temporary UI fixtures are excluded from the final build and repository.
+
+Hidden Chrome checks used isolated member fixtures, without sending email or modifying live content. Board, thread, sign-in/coming-soon, and guidelines fit at desktop and 390/320px widths. Axe WCAG 2 A/AA found no violations on the tested screens. Dialog opening, title focus, Escape/focus restoration, channel filters, anonymous submission, failed-reply text retention, and retry tokens passed. Unauthenticated forum API reads/writes return 401, and cross-origin writes are rejected.
+
+Live Supabase provisioning, SMTP delivery, Auth session refresh, and officer moderation permissions still require the deployment steps in [FORUM_SETUP.md](FORUM_SETUP.md). Local fixtures do not establish that live authentication is configured.
+
 ## Latest UI/UX workflow checks
 
 Navigation and event/announcement separation passed all 59 unit tests. Browser checks at 1440, 1200, 1120, 1024, 768, 390, and 320 pixels verified header fit, a single active menu item, outside-tap dismissal, mobile route selection, and client-side transitions without a full document reload. A read-only admin navigation fixture verified native Space-key activation, current-section labeling, a compact grid menu, and route navigation. Axe WCAG 2/2.1 A/AA reported no violations in that fixture. No CMS content was modified; deduplication changes public listing behavior only.

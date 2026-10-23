@@ -733,3 +733,18 @@ button:disabled {
 .admin-loading-lines span:last-child {
   width: 65%;
 }
+.admin-forum-reports {
+  display: grid;
+  gap: 24px;
+}
+.admin-forum-reports article {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.admin-forum-reports blockquote {
+  margin: 18px 0;
+  padding: 16px;
+  border-left: 3px solid #bdcbed;
+  background: #fff;
+  line-height: 1.7;
+}

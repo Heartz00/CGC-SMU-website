@@ -4,7 +4,7 @@ A responsive Next.js + TypeScript website for the Chemistry Graduate Council at 
 
 ## Run locally
 
-Requires Node.js 20.9 or later and npm.
+Requires Node.js 24 and npm. The forum authentication SDK requires a modern Node runtime; the project pins Node 24 for consistent local and Vercel builds.
 
 ```sh
 npm ci
@@ -37,5 +37,6 @@ Home, About, Executive Committee, Events, News (including post detail), Resource
 - [Vercel deployment](docs/DEPLOYMENT.md)
 - [Officer handover](docs/HANDOVER.md)
 - [Dashboard setup and access](docs/ADMIN_SETUP.md)
+- [Private student forum setup](docs/FORUM_SETUP.md)
 
 The repository target is https://github.com/Heartz00/CGC-SMU-website. Move repository and hosting ownership to council-controlled accounts for continuity. This application is a council website, not a central SMU website.

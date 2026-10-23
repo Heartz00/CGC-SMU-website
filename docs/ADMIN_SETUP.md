@@ -1,6 +1,6 @@
 ﻿# WordPress-backed dashboard
 
-The new `/admin` workspace edits content in SMU WordPress. Public pages remain React-styled. No database, shared WordPress admin login, or extra CMS is introduced.
+The `/admin` workspace edits content in SMU WordPress. Public pages remain React-styled. Each officer uses their own content account. The optional student forum has a separate database and student authentication; see [forum setup](FORUM_SETUP.md). Its **Forum moderation** section requires the `moderate_comments` capability.
 
 On Officers, select an existing image from the dropdown, labeled with its title and description. A thumbnail confirms the selection. **Upload a new photo** opens an upload-and-crop dialog in the editor. **Upload & select** chooses the new image automatically; save the officer list to persist its assignment. **Adjust / crop selected photo** opens a copy of an existing library image. Originals remain unchanged. Thumbnails load in batches of 24. Manual image URLs are under **More options**. **Clear photo** removes the assignment when you save, while keeping the library image.
 

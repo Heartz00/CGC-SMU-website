@@ -30,6 +30,11 @@ const sections = [
   },
   { href: "/admin/resources", label: "Resources", capability: "publish_pages" },
   { href: "/admin/media", label: "Photos", capability: "upload_files" },
+  {
+    href: "/admin/forum",
+    label: "Forum moderation",
+    capability: "moderate_comments",
+  },
   { href: "/admin/access", label: "People & access" },
 ];
 export async function AdminShell({

@@ -70,6 +70,7 @@ export function Footer() {
           <Link href="/about">About us</Link>
           <Link href="/executive-committee">Executive committee</Link>
           <Link href="/contact">Get in touch</Link>
+          <Link href="/forum">Student community</Link>
           <Link href="/admin">Council sign-in</Link>
         </div>
         <div>

@@ -17,6 +17,7 @@ export const navigation = [
   { href: "/events", label: "Events" },
   { href: "/news", label: "Announcements" },
   { href: "/executive-committee", label: "People" },
+  { href: "/forum", label: "Forum" },
   { href: "/photos", label: "Photos" },
   { href: "/resources", label: "Resources" },
   { href: "/about", label: "About" },
