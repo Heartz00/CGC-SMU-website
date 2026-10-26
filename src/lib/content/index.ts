@@ -1,10 +1,11 @@
 import "server-only";
 import officerData from "@/content/officers.json";
 import eventData from "@/content/events.json";
-import { facultySlug, facultyPositions } from "./faculty";
+import { defaultFaculty, facultySlug, facultyPositions } from "./faculty";
 import {
   parseEvents,
   parseOfficers,
+  parseFaculty,
   parseLegacyOfficers,
   validDate,
 } from "./adapters";
@@ -49,8 +50,8 @@ export async function getFaculty(): Promise<ContentResult<Officer>> {
     return {
       items:
         html === null
-          ? []
-          : parseOfficers(html).filter((person) =>
+          ? defaultFaculty
+          : parseFaculty(html).filter((person) =>
               facultyPositions.some(
                 (position) => position.role === person.role,
               ),
@@ -59,7 +60,11 @@ export async function getFaculty(): Promise<ContentResult<Officer>> {
       unavailable: false,
     };
   } catch {
-    return { items: [], source: "fallback", unavailable: enabled() };
+    return {
+      items: defaultFaculty,
+      source: "fallback",
+      unavailable: enabled(),
+    };
   }
 }
 export async function getOfficers(): Promise<ContentResult<Officer>> {

@@ -1,7 +1,6 @@
-import { facultyPositions } from "../content/faculty";
+import { facultyImage, facultyPositions } from "../content/faculty";
 import { officerForm, textField } from "./content";
 import { AdminError } from "./errors";
-import { wordpressImage } from "../content/flyer";
 
 export function facultyForm(form: FormData) {
   const records = new FormData();
@@ -21,7 +20,7 @@ export function facultyForm(form: FormData) {
         "validation",
         `${role}: enter a valid email address.`,
       );
-    if (photo && !wordpressImage(photo))
+    if (photo && !facultyImage(photo))
       throw new AdminError(
         "validation",
         `${role}: select a photo from the image library.`,
@@ -33,8 +32,9 @@ export function facultyForm(form: FormData) {
       email,
       photo,
       term: "",
+      photoPosition: "top",
     }))
       records.append(field, value);
   }
-  return officerForm(records);
+  return officerForm(records, facultyImage);
 }

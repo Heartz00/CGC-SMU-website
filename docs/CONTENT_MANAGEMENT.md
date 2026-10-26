@@ -6,6 +6,8 @@ In **Admin → Officers**, scroll below the student roster to **Faculty leadersh
 
 Profiles are stored on a separate managed `cgc-faculty` page. Student roster saves, term handovers, and council archives do not change this page. Faculty saves use the same permissions, version-conflict protection, and public content refresh as officer saves. Do not include faculty in the student roster as a workaround.
 
+The initial profiles are Dr. Peng Tao (Faculty Advisor) and Dr. David Y. Son (Department Chair), supplied by the council. Brief research summaries, contact details, and portraits come from their official [Peng Tao](https://www.smu.edu/dedman/academics/departments/chemistry/people/faculty/pengtao) and [David Y. Son](https://www.smu.edu/dedman/academics/departments/chemistry/people/faculty/davidyson) pages. These defaults appear only when there is no managed faculty page (or it cannot be fetched); a saved page takes precedence, including an intentionally empty page. The admin form starts with the defaults until its first save. Faculty photos may use the SMU chemistry directory media path or the existing image library; student photo permissions are unchanged.
+
 ## Simpler dashboard
 
 The optional `/admin` workspace provides forms for officers, events, announcements, resources, and photos while saving in WordPress. Each editor uses their own WordPress application password. See [dashboard setup](ADMIN_SETUP.md). The frontend prefers the dashboard-managed `cgc-officers` page when present; until then it reads the original `officers` page. Dashboard-managed events appear alongside Calendar+ entries.

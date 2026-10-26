@@ -1,5 +1,11 @@
 # Development validation
 
+## Faculty profile content — October 26, 2026
+
+Added council-supplied Faculty Advisor Dr. Peng Tao and Department Chair Dr. David Y. Son as editable initial profiles, with brief research summaries and contact details from official SMU faculty pages. Public lookup confirmed no managed `cgc-faculty` page exists yet; defaults are used until the first admin save. Existing managed content, including an empty saved table, takes precedence.
+
+All 69 tests pass. Official SMU chemistry-directory portraits round-trip through the faculty form/table parser, while student photo permissions remain restricted. Unsafe faculty hosts, paths, credentials, and ports are rejected. Both original portraits return JPEG/200. Production-preview Chrome checks at 1440, 390, and 320px confirm names, email links, two loaded optimized portraits, no page overflow, and no Axe WCAG 2 A/AA violations.
+
 ## Faculty leadership — October 26, 2026
 
 All 68 tests pass, including faculty profile table round-trips, fixed role enforcement, escaped biography content, empty profiles, and rejected incomplete/unsafe inputs. Faculty records use a separate managed page so student roster and archive operations remain independent. Lint, TypeScript, formatting, and the isolated production build pass.

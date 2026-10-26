@@ -117,9 +117,11 @@ export function EventCard({
 export function OfficerCard({
   officer,
   headingLevel = "h2",
+  contactLabel,
 }: {
   officer: Officer;
   headingLevel?: "h2" | "h3";
+  contactLabel?: string;
 }) {
   const Heading = headingLevel;
   const initials = officer.name
@@ -158,7 +160,7 @@ export function OfficerCard({
         {officer.bio && <p>{officer.bio}</p>}
         {officer.email && (
           <a className="text-link" href={`mailto:${officer.email}`}>
-            Contact {officer.name.split(" ")[0]} <Arrow />
+            {contactLabel || `Contact ${officer.name.split(" ")[0]}`} <Arrow />
           </a>
         )}
       </div>

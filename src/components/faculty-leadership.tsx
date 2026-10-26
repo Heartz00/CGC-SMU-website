@@ -25,7 +25,12 @@ export function FacultyLeadership({
           {facultyPositions.map(({ key, role }) => {
             const person = people.find((item) => item.role === role);
             return person ? (
-              <OfficerCard key={key} officer={person} headingLevel="h3" />
+              <OfficerCard
+                key={key}
+                officer={person}
+                headingLevel="h3"
+                contactLabel="Email"
+              />
             ) : (
               <article key={key} className="faculty-placeholder">
                 <h3>{role}</h3>

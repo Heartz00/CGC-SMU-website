@@ -3,11 +3,11 @@ import { RecordsEditor } from "@/components/admin/records";
 import { requireAdmin } from "@/lib/admin/auth";
 import { editablePage } from "@/lib/admin/wordpress";
 import { getOfficers } from "@/lib/content";
-import { parseOfficers } from "@/lib/content/adapters";
+import { parseFaculty, parseOfficers } from "@/lib/content/adapters";
 import { saveOfficers } from "../actions";
 import Link from "next/link";
 import { FacultyEditor } from "@/components/admin/faculty-editor";
-import { facultySlug } from "@/lib/content/faculty";
+import { defaultFaculty, facultySlug } from "@/lib/content/faculty";
 export default async function Officers({
   searchParams,
 }: {
@@ -57,7 +57,9 @@ export default async function Officers({
         <h2 id="faculty-editor-title">Faculty leadership</h2>
         <FacultyEditor
           initial={
-            facultyPage ? parseOfficers(facultyPage.content.rendered) : []
+            facultyPage
+              ? parseFaculty(facultyPage.content.rendered)
+              : defaultFaculty
           }
           version={facultyPage?.modified_gmt || "new"}
         />

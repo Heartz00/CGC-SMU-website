@@ -823,7 +823,7 @@ em {
   .faculty-grid .officer-photo {
     height: auto;
     min-height: 0;
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 1 / 1;
   }
 }
 .officers-grid {

@@ -68,7 +68,11 @@ export function needsFormattingConfirmation(html: string) {
 function table(headers: string[], rows: string[][]) {
   return `<!-- wp:table --><figure class="wp-block-table"><table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join("")}</tr>`).join("")}</tbody></table></figure><!-- /wp:table -->`;
 }
-export function officerForm(form: FormData): Officer[] {
+export function officerForm(
+  form: FormData,
+  allowPhoto: (url: string) => boolean = (url) =>
+    new URL(url).hostname === "blog.smu.edu",
+): Officer[] {
   const names = form.getAll("name");
   if (names.length > 30)
     throw new AdminError(
@@ -96,7 +100,7 @@ export function officerForm(form: FormData): Officer[] {
           !validTermDate(termEnd) ||
           termStart > termEnd)) ||
       (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) ||
-      (photo && (!safeUrl(photo) || new URL(photo).hostname !== "blog.smu.edu"))
+      (photo && (!safeUrl(photo) || !allowPhoto(photo)))
     )
       throw new AdminError(
         "validation",

@@ -3,6 +3,7 @@ import sanitizeHtml from "sanitize-html";
 import type { CouncilEvent, Officer } from "./types";
 import { wordpressImage } from "./flyer";
 import { validTermDate } from "./council-history";
+import { facultyImage } from "./faculty";
 
 export function safeUrl(value: string): string | undefined {
   try {
@@ -84,7 +85,14 @@ function rows(html: string, required: string[]): Record<string, string>[] {
   });
   return result;
 }
-export function parseOfficers(html: string): Officer[] {
+export function parseFaculty(html: string): Officer[] {
+  return parseOfficers(html, facultyImage);
+}
+export function parseOfficers(
+  html: string,
+  allowPhoto: (url: string) => boolean = (url) =>
+    new URL(url).hostname === "blog.smu.edu",
+): Officer[] {
   return rows(html, ["name", "role"])
     .filter((row) => row.name && row.role)
     .map((row) => {
@@ -104,10 +112,7 @@ export function parseOfficers(html: string): Officer[] {
           ? { termStart: row["term start"], termEnd: row["term end"] }
           : {}),
         email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ? email : undefined,
-        photo:
-          photo && new URL(photo).hostname === "blog.smu.edu"
-            ? photo
-            : undefined,
+        photo: photo && allowPhoto(photo) ? photo : undefined,
       };
     });
 }

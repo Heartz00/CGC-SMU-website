@@ -34,6 +34,16 @@ const config: NextConfig = {
     ];
   },
   experimental: { serverActions: { bodySizeLimit: "3mb" } },
-  images: { remotePatterns: [{ protocol: "https", hostname: "blog.smu.edu" }] },
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "blog.smu.edu" },
+      {
+        protocol: "https",
+        hostname: "www.smu.edu",
+        pathname:
+          "/-/media/site/dedman/departments-official/chemistry/directory/**",
+      },
+    ],
+  },
 };
 export default config;
