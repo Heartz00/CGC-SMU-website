@@ -47,6 +47,23 @@ test("forum database enforces membership, anonymous privacy, ownership and moder
     await assert.rejects(rpc("cgc_forum_profile"), /verified SMU/);
     await asUser(unverified);
     await assert.rejects(rpc("cgc_forum_profile"), /verified SMU/);
+    await db.exec("reset role;");
+    await db.exec(
+      readFileSync(
+        path.join(
+          process.cwd(),
+          "supabase/migrations/202610260001_forum_password_signin.sql",
+        ),
+        "utf8",
+      ),
+    );
+    await asUser(unverified);
+    assert.ok(
+      await rpc("cgc_forum_profile"),
+      "Signed-in SMU accounts no longer need email confirmation",
+    );
+    await asUser(outsider);
+    await assert.rejects(rpc("cgc_forum_profile"), /Only SMU/);
     await db.exec("reset role;set role anon;");
     await assert.rejects(rpc("cgc_forum_feed"), /permission denied/);
     await asUser(alex);

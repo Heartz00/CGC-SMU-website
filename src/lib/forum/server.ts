@@ -41,11 +41,7 @@ export const forumSession = cache(async () => {
   if (!forumEnabled()) return null;
   const client = await forumClient();
   const { data, error } = await client.auth.getUser();
-  if (
-    error ||
-    !data.user?.email_confirmed_at ||
-    !/^[^@]+@smu\.edu$/i.test(data.user.email || "")
-  )
+  if (error || !data.user || !/^[^@]+@smu\.edu$/i.test(data.user.email || ""))
     return null;
   return { client, user: data.user };
 });

@@ -17,7 +17,7 @@ Public client components handle navigation, collection filters, the photo viewer
 - `src/content/*.json`: isolated temporary officer/event fallbacks, initially empty.
 - `src/app/admin`, `src/components/admin`, `src/lib/admin`: WordPress-backed dashboard, guarded server actions, per-user authentication, encrypted sessions, and simple content forms.
 - `tests`: adapter checks for HTML security, officer mapping, event timezones, and date partitioning.
-- `src/app/forum`, `src/components/forum`, `src/lib/forum`: private discussions, email OTP authentication, and validation.
+- `src/app/forum`, `src/components/forum`, `src/lib/forum`: private discussions, email/password authentication (without email verification), and validation.
 - `src/app/api/forum`: authenticated, uncached endpoints with same-origin checks for writes.
 - `src/proxy.ts`: refreshes forum Auth cookies before server rendering.
 - `supabase/migrations`: private forum schema, restricted RPCs, rate limits, and audit history.

@@ -1,92 +1,119 @@
 "use client";
 import { useActionState, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
-import { requestForumCode, verifyForumCode } from "@/app/forum/actions";
+import { authenticateForum } from "@/app/forum/actions";
 import type { ForumResult } from "@/lib/forum/types";
-function LoginSubmit({ label }: { label: string }) {
+function LoginSubmit({ creating }: { creating: boolean }) {
   const { pending } = useFormStatus();
   return (
     <button className="forum-primary" disabled={pending}>
-      {pending ? "Please wait…" : label}
+      {pending ? "Please wait…" : creating ? "Create account" : "Sign in"}
     </button>
   );
 }
-export function ForumLoginForm({ next }: { next: string }) {
+function AccountForm({ creating, next }: { creating: boolean; next: string }) {
   const router = useRouter();
-  const [restart, setRestart] = useState(false);
-  const [codeState, request] = useActionState(
-    async (previous: ForumResult, data: FormData) => {
-      const result = await requestForumCode(previous, data);
-      if (result.phase === "verify") setRestart(false);
-      return result;
-    },
-    { message: "" } as ForumResult,
-  );
-  const [verified, verify] = useActionState(verifyForumCode, {
+  const [email, setEmail] = useState("");
+  const [result, action] = useActionState(authenticateForum, {
     message: "",
   } as ForumResult);
-  const checking = codeState.phase === "verify" && !restart;
   useEffect(() => {
-    if (verified.success && verified.next) {
-      router.replace(verified.next);
+    if (result.success && result.next) {
+      router.replace(result.next);
       router.refresh();
     }
-  }, [verified, router]);
-  return checking ? (
-    <>
-      <p className="forum-help">
-        We sent a code to <strong>{codeState.email}</strong>. Check your inbox
-        and junk folder.
-      </p>
-      <form action={verify} className="forum-form">
-        <input type="hidden" name="email" value={codeState.email} />
-        <input type="hidden" name="next" value={next} />
-        <label>
-          Sign-in code
-          <input
-            name="code"
-            autoComplete="one-time-code"
-            inputMode="numeric"
-            pattern="[0-9]{6,10}"
-            minLength={6}
-            maxLength={10}
-            required
-            placeholder="Enter your email code"
-            autoFocus
-          />
-        </label>
-        <LoginSubmit label="Verify & join" />
-        {verified.message && (
-          <p role={verified.success ? "status" : "alert"}>{verified.message}</p>
-        )}
-      </form>
-      <button
-        type="button"
-        className="forum-text-button"
-        onClick={() => setRestart(true)}
-      >
-        Use another email or request a new code
-      </button>
-    </>
-  ) : (
-    <form action={request} className="forum-form">
+  }, [result, router]);
+  return (
+    <form action={action} className="forum-form">
+      <input type="hidden" name="mode" value={creating ? "signup" : "signin"} />
+      <input type="hidden" name="next" value={next} />
       <label>
         SMU email
         <input
           name="email"
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
           type="email"
-          autoComplete="email"
+          autoComplete="username"
           required
           maxLength={254}
           placeholder="you@smu.edu"
         />
       </label>
+      <label>
+        {creating ? "Create a forum password" : "Forum password"}
+        <input
+          name="password"
+          type="password"
+          autoComplete={creating ? "new-password" : "current-password"}
+          required
+          minLength={creating ? 10 : 1}
+          maxLength={128}
+        />
+      </label>
+      {creating && (
+        <label>
+          Confirm password
+          <input
+            name="passwordConfirmation"
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={10}
+            maxLength={128}
+          />
+        </label>
+      )}
       <p className="forum-help">
-        We’ll send you a sign-in code. No new password to remember.
+        {creating
+          ? "Use at least 10 characters. Choose a new password for this forum; do not use your SMU password."
+          : "Use the password you created for this forum, not your SMU account password."}
       </p>
-      <LoginSubmit label="Send sign-in code" />
-      {codeState.message && <p role="status">{codeState.message}</p>}
+      <LoginSubmit creating={creating} />
+      {result.message && (
+        <p role={result.success ? "status" : "alert"}>{result.message}</p>
+      )}
     </form>
+  );
+}
+export function ForumLoginForm({ next }: { next: string }) {
+  const [creating, setCreating] = useState(false);
+  return (
+    <>
+      <div
+        className="forum-account-switch"
+        role="group"
+        aria-label="Account access"
+      >
+        <button
+          type="button"
+          className={creating ? "forum-secondary" : "forum-primary"}
+          aria-pressed={!creating}
+          onClick={() => setCreating(false)}
+        >
+          Sign in
+        </button>
+        <button
+          type="button"
+          className={creating ? "forum-primary" : "forum-secondary"}
+          aria-pressed={creating}
+          onClick={() => setCreating(true)}
+        >
+          Create account
+        </button>
+      </div>
+      <AccountForm
+        key={creating ? "signup" : "signin"}
+        creating={creating}
+        next={next}
+      />
+      <p className="forum-help">
+        Email verification is currently disabled. An SMU email address does not
+        establish verified membership.
+      </p>
+      <Link href="/contact">Need help accessing your account?</Link>
+    </>
   );
 }

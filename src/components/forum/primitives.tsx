@@ -90,8 +90,8 @@ export function ForumIdentity({
         </span>
       </label>
       <p>
-        Your account stays verified. Moderators can identify authors to address
-        reports and abuse.
+        Your account remains linked privately. Moderators can identify authors
+        to address reports and abuse.
       </p>
     </fieldset>
   );

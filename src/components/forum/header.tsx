@@ -16,7 +16,7 @@ export function ForumHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="forum-membership">
         <span>
           <span className="forum-status-dot" />
-          Verified SMU members
+          Student community
         </span>
         {signedIn ? (
           <form action={signOutForum}>

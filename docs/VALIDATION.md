@@ -1,5 +1,11 @@
 # Development validation
 
+## Password sign-in without email verification — October 26, 2026
+
+All 66 tests pass. Both database migrations run in sequence: the original confirmed-email rule is checked, then the update permits an unconfirmed SMU account while still rejecting outsiders, unauthenticated access, forged moderation calls, and ownership violations. Password tests cover length/preservation, missing sessions, safe errors, rate-limit responses, and preventing signup calls while email confirmation is enabled. Lint, TypeScript, formatting, and the isolated production build pass.
+
+Chrome production-preview checks at 1440, 390, and 320px verify account-mode switching, password fields/autocomplete, no OTP input, no horizontal overflow, server rejection of mismatched passwords, and unauthenticated API rejection. Axe WCAG 2 A/AA reports no violations on the tested signup screens. Preview uses placeholder Supabase configuration and creates no live accounts. Live confirmation settings and the new database migration must be applied by the project owner; SMTP delivery is not used by the new flow.
+
 ## Student forum — October 23, 2026
 
 All 63 tests pass, including executing the forum migration in an isolated PGlite database. Checks cover unverified/non-SMU rejection, anonymous identity isolation, private-table and moderation access denial, ownership, stale edits, reporting, atomic moderation, suspension, removal, rate limits, and retry-safe posting. Lint, TypeScript, formatting, and a clean npm 10 `ci --dry-run` pass.

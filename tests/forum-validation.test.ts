@@ -8,7 +8,7 @@ import {
   safeForumNext,
   forumText,
 } from "../src/lib/forum/validation";
-test("student sign-in accepts only exact verified-domain address forms", () => {
+test("student sign-in accepts only exact SMU-domain address forms", () => {
   assert.equal(studentEmail(" Student@SMU.edu "), "student@smu.edu");
   for (const value of [
     "user@smu.edu.evil.example",

@@ -6,8 +6,10 @@ import {
   ForumError,
   studentEmail,
   safeForumNext,
-  forumText,
+  forumPassword,
 } from "@/lib/forum/validation";
+import { forumConfig } from "@/lib/forum/config";
+import { passwordForumAuth } from "@/lib/forum/password-auth";
 import type { ForumResult } from "@/lib/forum/types";
 async function checkOrigin() {
   const h = await headers();
@@ -15,68 +17,39 @@ async function checkOrigin() {
   if (!origin || new URL(origin).host !== h.get("host"))
     throw new ForumError("Refresh this page before signing in.");
 }
-export async function requestForumCode(
+export async function authenticateForum(
   _previous: ForumResult,
   form: FormData,
 ): Promise<ForumResult> {
   try {
     await checkOrigin();
     const email = studentEmail(form.get("email"));
+    const creating = form.get("mode") === "signup";
+    const password = forumPassword(form.get("password"), creating);
+    if (creating && password !== form.get("passwordConfirmation"))
+      throw new ForumError("The passwords do not match.");
     const client = await forumClient();
-    const { error } = await client.auth.signInWithOtp({
-      email,
-      options: { shouldCreateUser: true },
-    });
-    if (error)
-      return {
-        message:
-          error.status === 429
-            ? "Please wait before requesting another code."
-            : "We could not send a code. Please try again or contact the council.",
-      };
-    return {
-      success: true,
-      phase: "verify",
-      email,
-      message: "Check your SMU inbox for your sign-in code.",
-    };
-  } catch (error) {
-    return {
-      message:
-        error instanceof ForumError
-          ? error.message
-          : "Sign-in is temporarily unavailable. Please try again.",
-    };
-  }
-}
-export async function verifyForumCode(
-  _previous: ForumResult,
-  form: FormData,
-): Promise<ForumResult> {
-  try {
-    await checkOrigin();
-    const email = studentEmail(form.get("email"));
-    const code = forumText(form.get("code"), "Code", 6, 10);
-    if (!/^\d{6,10}$/.test(code))
-      throw new ForumError("Enter the code from your SMU email.");
-    const client = await forumClient();
-    const { data, error } = await client.auth.verifyOtp({
-      email,
-      token: code,
-      type: "email",
-    });
-    if (error || !data.user?.email_confirmed_at)
-      return {
-        message:
-          "That code is invalid or has expired. Request a new code and try again.",
-      };
-    if (studentEmail(data.user.email) !== email) {
-      await client.auth.signOut({ scope: "local" });
-      throw new ForumError("Use your verified SMU account.");
+    let signupReady = false;
+    if (creating) {
+      // Avoid triggering any confirmation email when project settings are not ready.
+      const config = forumConfig()!;
+      const response = await fetch(config.url + "/auth/v1/settings", {
+        headers: { apikey: config.key },
+        cache: "no-store",
+        signal: AbortSignal.timeout(10000),
+      });
+      if (response.ok) {
+        const settings = await response.json();
+        signupReady =
+          settings.mailer_autoconfirm === true &&
+          settings.disable_signup !== true &&
+          settings.external?.email === true;
+      }
     }
+    await passwordForumAuth(client, { email, password }, creating, signupReady);
     return {
       success: true,
-      message: "Signed in.",
+      message: creating ? "Account created." : "Signed in.",
       next: safeForumNext(form.get("next")),
     };
   } catch (error) {
@@ -84,7 +57,7 @@ export async function verifyForumCode(
       message:
         error instanceof ForumError
           ? error.message
-          : "We could not verify your code. Please try again.",
+          : "Sign-in is temporarily unavailable. Please try again.",
     };
   }
 }

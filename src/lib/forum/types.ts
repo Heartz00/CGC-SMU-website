@@ -60,8 +60,6 @@ export type ForumDiscussion = {
 export type ForumResult = {
   success?: boolean;
   message: string;
-  email?: string;
-  phase?: "verify";
   next?: string;
 };
 export type ForumReport = {

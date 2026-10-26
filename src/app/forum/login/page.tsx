@@ -21,7 +21,7 @@ export default async function ForumLogin({
       membershipError =
         error instanceof ForumError
           ? error.message
-          : "Your membership could not be verified.";
+          : "Your account could not be checked.";
     }
     if (!membershipError) redirect(next);
   }
@@ -42,8 +42,8 @@ export default async function ForumLogin({
           <div>
             <ForumIcon kind="shield" />
             <span>
-              <strong>A verified community</strong>Membership uses your SMU
-              email.
+              <strong>A student community</strong>Create an account with your
+              SMU email.
             </span>
           </div>
           <div>

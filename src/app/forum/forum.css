@@ -3,6 +3,12 @@
   color: #182238;
   min-height: 65vh;
 }
+.forum-account-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-block: 20px;
+}
 .forum-container {
   padding-block: 48px 80px;
 }

@@ -16,6 +16,19 @@ export function studentEmail(value: unknown) {
     throw new ForumError("Use your SMU email address ending in @smu.edu.");
   return value.trim().toLowerCase();
 }
+export function forumPassword(value: unknown, creating = false) {
+  if (
+    typeof value !== "string" ||
+    value.length > 128 ||
+    value.length < (creating ? 10 : 1)
+  )
+    throw new ForumError(
+      creating
+        ? "Choose a forum password of 10–128 characters."
+        : "Enter your forum password.",
+    );
+  return value;
+}
 export function forumText(
   value: unknown,
   label: string,

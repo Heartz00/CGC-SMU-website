@@ -24,19 +24,18 @@ export default function Guidelines() {
             discussion, but different aliases across discussions.
           </p>
           <p>
-            Your verified account is still linked to your posts privately.
-            Moderators can identify authors to investigate reports and manage
-            abuse. This is not an untraceable or end-to-end encrypted chat
-            service.
+            Your account is still linked to your posts privately. Moderators can
+            identify authors to investigate reports and manage abuse. This is
+            not an untraceable or end-to-end encrypted chat service.
           </p>
         </article>
         <article>
           <h2>Protect each other’s privacy.</h2>
           <p>
             Do not share someone else’s personal details, private messages,
-            credentials, or confidential research. Posts are visible to verified
-            forum members; avoid sharing anything you would not want another
-            member to copy.
+            credentials, or confidential research. Email ownership is not
+            currently verified. Posts are visible to signed-in forum members;
+            avoid sharing anything you would not want another member to copy.
           </p>
         </article>
         <article>
