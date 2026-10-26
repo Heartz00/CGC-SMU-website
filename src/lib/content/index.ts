@@ -1,6 +1,7 @@
 import "server-only";
 import officerData from "@/content/officers.json";
 import eventData from "@/content/events.json";
+import { facultySlug, facultyPositions } from "./faculty";
 import {
   parseEvents,
   parseOfficers,
@@ -42,6 +43,25 @@ const archive: Announcement[] = [
     url: "https://blog.smu.edu/chemgrads/category/uncategorized/",
   },
 ];
+export async function getFaculty(): Promise<ContentResult<Officer>> {
+  try {
+    const html = await getWordPressPage(facultySlug);
+    return {
+      items:
+        html === null
+          ? []
+          : parseOfficers(html).filter((person) =>
+              facultyPositions.some(
+                (position) => position.role === person.role,
+              ),
+            ),
+      source: "wordpress",
+      unavailable: false,
+    };
+  } catch {
+    return { items: [], source: "fallback", unavailable: enabled() };
+  }
+}
 export async function getOfficers(): Promise<ContentResult<Officer>> {
   try {
     const managedHtml = await getWordPressPage(

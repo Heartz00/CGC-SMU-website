@@ -1,5 +1,11 @@
 # Content management
 
+## Faculty leadership
+
+In **Admin → Officers**, scroll below the student roster to **Faculty leadership**. Edit the two fixed profiles, **Faculty Advisor** and **Department Chair**, choose photos from the library, add optional email addresses and biographies, then select **Save faculty profiles**. These profiles appear below the executive council on the People page. A completely empty profile displays its role with “Profile coming soon”; other fields require a name before saving.
+
+Profiles are stored on a separate managed `cgc-faculty` page. Student roster saves, term handovers, and council archives do not change this page. Faculty saves use the same permissions, version-conflict protection, and public content refresh as officer saves. Do not include faculty in the student roster as a workaround.
+
 ## Simpler dashboard
 
 The optional `/admin` workspace provides forms for officers, events, announcements, resources, and photos while saving in WordPress. Each editor uses their own WordPress application password. See [dashboard setup](ADMIN_SETUP.md). The frontend prefers the dashboard-managed `cgc-officers` page when present; until then it reads the original `officers` page. Dashboard-managed events appear alongside Calendar+ entries.

@@ -114,7 +114,14 @@ export function EventCard({
     </article>
   );
 }
-export function OfficerCard({ officer }: { officer: Officer }) {
+export function OfficerCard({
+  officer,
+  headingLevel = "h2",
+}: {
+  officer: Officer;
+  headingLevel?: "h2" | "h3";
+}) {
+  const Heading = headingLevel;
   const initials = officer.name
     .split(" ")
     .filter(Boolean)
@@ -140,7 +147,7 @@ export function OfficerCard({ officer }: { officer: Officer }) {
       </div>
       <div className="officer-body">
         <p className="eyebrow">{officer.role}</p>
-        <h2>{officer.name}</h2>
+        <Heading>{officer.name}</Heading>
         {officer.term && <p className="term">{officer.term}</p>}
         {officer.termStart && officer.termEnd && (
           <p className="term">

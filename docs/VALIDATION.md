@@ -1,5 +1,11 @@
 # Development validation
 
+## Faculty leadership — October 26, 2026
+
+All 68 tests pass, including faculty profile table round-trips, fixed role enforcement, escaped biography content, empty profiles, and rejected incomplete/unsafe inputs. Faculty records use a separate managed page so student roster and archive operations remain independent. Lint, TypeScript, formatting, and the isolated production build pass.
+
+Isolated Chrome fixtures render the actual faculty section and admin editor with sample people. At 1440, 900, 390, and 320px, cards and fields fit without horizontal overflow, both role forms are present with no nested forms, and Axe WCAG 2 A/AA reports no violations. The real empty-state page shows both faculty roles without inventing identities. No live content was changed; faculty names/photos must be supplied through the admin editor.
+
 ## Password sign-in without email verification — October 26, 2026
 
 All 66 tests pass. Both database migrations run in sequence: the original confirmed-email rule is checked, then the update permits an unconfirmed SMU account while still rejecting outsiders, unauthenticated access, forged moderation calls, and ownership violations. Password tests cover length/preservation, missing sessions, safe errors, rate-limit responses, and preventing signup calls while email confirmation is enabled. Lint, TypeScript, formatting, and the isolated production build pass.

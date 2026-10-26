@@ -1,5 +1,7 @@
 "use server";
 import { headers } from "next/headers";
+import { facultyForm } from "@/lib/admin/faculty";
+import { facultySlug } from "@/lib/content/faculty";
 import { redirect } from "next/navigation";
 import { revalidatePath, updateTag } from "next/cache";
 import {
@@ -518,6 +520,35 @@ export async function logout() {
   await sameOrigin();
   await clearSession();
   redirect("/admin/login");
+}
+export async function saveFaculty(form: FormData): Promise<SaveResult> {
+  const access = await saveAccess("publish_pages");
+  if (!access.ok) return access.result;
+  try {
+    await sameOrigin();
+    const saved = await savePage(
+      access.auth.session,
+      facultySlug,
+      "CGC Faculty Leadership",
+      officersTable(facultyForm(form)),
+      textField(form, "version", 80),
+    );
+    refreshContent();
+    revalidatePath("/admin/officers");
+    return {
+      success: true,
+      message: "Saved.",
+      version: saved.modified_gmt,
+      links: [
+        {
+          href: "/executive-committee#faculty-leadership",
+          label: "View faculty profiles",
+        },
+      ],
+    };
+  } catch (error) {
+    return saveFailure(error);
+  }
 }
 export async function saveOfficers(form: FormData): Promise<SaveResult> {
   const access = await saveAccess("publish_pages");

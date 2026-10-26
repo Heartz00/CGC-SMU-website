@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { getOfficers } from "@/lib/content";
+import { getFaculty, getOfficers } from "@/lib/content";
+import { FacultyLeadership } from "@/components/faculty-leadership";
 import { OfficerCard } from "@/components/content";
 import { EmptyState, PageIntro } from "@/components/ui";
 import { site } from "@/lib/site";
@@ -7,7 +8,7 @@ import Link from "next/link";
 export const metadata: Metadata = { title: "Executive Committee" };
 export const revalidate = 300;
 export default async function Committee() {
-  const officers = await getOfficers();
+  const [officers, faculty] = await Promise.all([getOfficers(), getFaculty()]);
   return (
     <>
       <PageIntro label="Our people" title="Meet your council.">
@@ -43,6 +44,10 @@ export default async function Committee() {
           </EmptyState>
         )}
       </section>
+      <FacultyLeadership
+        people={faculty.items}
+        unavailable={faculty.unavailable}
+      />
     </>
   );
 }

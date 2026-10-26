@@ -6,6 +6,8 @@ import { getOfficers } from "@/lib/content";
 import { parseOfficers } from "@/lib/content/adapters";
 import { saveOfficers } from "../actions";
 import Link from "next/link";
+import { FacultyEditor } from "@/components/admin/faculty-editor";
+import { facultySlug } from "@/lib/content/faculty";
 export default async function Officers({
   searchParams,
 }: {
@@ -20,6 +22,7 @@ export default async function Officers({
   const current = page
     ? parseOfficers(page.content.rendered)
     : (await getOfficers()).items;
+  const facultyPage = await editablePage(session, facultySlug);
   return (
     <AdminShell
       title="Meet the council."
@@ -47,6 +50,18 @@ export default async function Officers({
         version={page?.modified_gmt || "new"}
         action={saveOfficers}
       />
+      <section
+        aria-labelledby="faculty-editor-title"
+        className="faculty-admin-section"
+      >
+        <h2 id="faculty-editor-title">Faculty leadership</h2>
+        <FacultyEditor
+          initial={
+            facultyPage ? parseOfficers(facultyPage.content.rendered) : []
+          }
+          version={facultyPage?.modified_gmt || "new"}
+        />
+      </section>
     </AdminShell>
   );
 }
