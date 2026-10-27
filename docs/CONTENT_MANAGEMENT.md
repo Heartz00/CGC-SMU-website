@@ -1,5 +1,11 @@
 # Content management
 
+## ACS photo albums
+
+The 18 supplied photos are published from `public/photos/2026`, with captions and descriptions in `src/content/acs-photo-import.json`. Thirteen belong to **ACS National Chemistry Week Outreach** at the Fort Worth Museum of Science and History; five belong to **ACS Program-in-a-Box**. Event dates remain empty because they were not supplied.
+
+The Photos page and Admin → Albums initially merge this import with any existing album entries without duplicate image URLs. The first admin save stores the complete list with an import marker. After that, saved captions, replacements, and removals take precedence, including an intentionally empty album list. Imported files can be selected by their existing path; other local paths are rejected. New uploads still use the existing image library.
+
 ## Faculty leadership
 
 In **Admin → Officers**, scroll below the student roster to **Faculty leadership**. Edit the two fixed profiles, **Faculty Advisor** and **Department Chair**, choose photos from the library, add optional email addresses and biographies, then select **Save faculty profiles**. These profiles appear below the executive council on the People page. A completely empty profile displays its role with “Profile coming soon”; other fields require a name before saving.

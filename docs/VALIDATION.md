@@ -1,5 +1,11 @@
 # Development validation
 
+## ACS photo import — October 26, 2026
+
+All 72 tests pass. The 18 supplied JPEGs are copied unchanged into public assets: 13 museum outreach images and five Program-in-a-Box images. Tests verify asset existence, album counts, captions/descriptions, no invented dates, lossless metadata table round-trips, merge/deduplication with previous albums, persisted removals, and rejection of unregistered local paths and external image hosts. Lint, TypeScript, formatting, and the production build pass.
+
+Production-preview Chrome checks at 1440, 390, and 320px confirm all 18 optimized images load, album filters return 13/5 photos, load-more works, the lightbox opens/closes, no horizontal overflow, and no Axe WCAG 2 A/AA violations. Album edits use the existing authenticated CMS save path; no live CMS content was overwritten during development.
+
 ## Faculty profile content — October 26, 2026
 
 Added council-supplied Faculty Advisor Dr. Peng Tao and Department Chair Dr. David Y. Son as editable initial profiles, with brief research summaries and contact details from official SMU faculty pages. Public lookup confirmed no managed `cgc-faculty` page exists yet; defaults are used until the first admin save. Existing managed content, including an empty saved table, takes precedence.

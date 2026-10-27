@@ -2,7 +2,7 @@ import { AdminShell } from "@/components/admin/shared";
 import { AlbumEditor } from "@/components/admin/album-editor";
 import { requireAdmin } from "@/lib/admin/auth";
 import { editablePage } from "@/lib/admin/wordpress";
-import { parseAlbums } from "@/lib/content/albums";
+import { resolveAlbums } from "@/lib/content/albums";
 import { saveAlbums } from "../actions";
 export default async function Albums() {
   const { session } = await requireAdmin("publish_pages");
@@ -23,7 +23,7 @@ export default async function Albums() {
         </a>
       </p>
       <AlbumEditor
-        initial={parseAlbums(page?.content.rendered || "")}
+        initial={resolveAlbums(page?.content.rendered || null)}
         version={page?.modified_gmt || "new"}
         action={saveAlbums}
       />

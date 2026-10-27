@@ -59,7 +59,7 @@ export function AlbumEditor({
                 />
               </label>
             ))}
-            <ImagePicker name="photo" initial={photo.url} />
+            <ImagePicker name="photo" initial={photo.url} allowImportedPhotos />
             <button
               type="button"
               className="admin-remove"

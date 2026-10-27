@@ -3,6 +3,7 @@ import { useEffect, useId, useRef, useState } from "react";
 import type { LibraryImage } from "@/lib/admin/image-types";
 import { FieldError, useMarkUnsaved } from "./saved-form";
 import { ImageUploadDialog } from "./image-upload-dialog";
+import { isImportedAlbumPhoto } from "@/lib/content/album-import";
 let libraryRequest: Promise<LibraryImage[]> | null = null;
 function loadImages() {
   if (!libraryRequest)
@@ -23,11 +24,13 @@ export function ImagePicker({
   name = "photo",
   onChange,
   errorName,
+  allowImportedPhotos = false,
 }: {
   initial: string;
   name?: string;
   onChange?: () => void;
   errorName?: string;
+  allowImportedPhotos?: boolean;
 }) {
   const id = useId();
   const markUnsaved = useMarkUnsaved();
@@ -125,6 +128,12 @@ export function ImagePicker({
           />
         </div>
       )}
+      {!selected && allowImportedPhotos && isImportedAlbumPhoto(url) && (
+        <div className="admin-image-preview">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={url} alt="Selected album photo" width={100} height={75} />
+        </div>
+      )}
       {!loading && !error && images.length > 0 && (
         <details className="admin-image-gallery">
           <summary>Browse thumbnails</summary>
@@ -214,7 +223,7 @@ export function ImagePicker({
             id={`${id}-url`}
             ref={input}
             name={name}
-            type="url"
+            type={allowImportedPhotos ? "text" : "url"}
             value={url}
             maxLength={1000}
             onChange={(event) => choose(event.target.value)}

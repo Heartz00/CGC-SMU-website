@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { PhotoGallery } from "@/components/photo-gallery";
 import { getWordPressPage } from "@/lib/content/wordpress";
-import { parseAlbums } from "@/lib/content/albums";
+import { resolveAlbums } from "@/lib/content/albums";
 import { PageIntro } from "@/components/ui";
 export const metadata: Metadata = { title: "Photo albums" };
 export const revalidate = 300;
@@ -13,7 +13,7 @@ export default async function Photos() {
   } catch {
     unavailable = true;
   }
-  const photos = parseAlbums(html);
+  const photos = resolveAlbums(html);
   return (
     <>
       <PageIntro label="Our community" title="Moments together.">

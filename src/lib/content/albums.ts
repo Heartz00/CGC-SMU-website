@@ -1,5 +1,10 @@
 import { load } from "cheerio";
 import { wordpressImage } from "./flyer";
+import {
+  albumImportVersion,
+  importedAlbumPhotos,
+  isImportedAlbumPhoto,
+} from "./album-import";
 export type AlbumPhoto = {
   album: string;
   date: string;
@@ -7,6 +12,20 @@ export type AlbumPhoto = {
   caption: string;
   alt: string;
 };
+export function albumImage(value: string) {
+  return isImportedAlbumPhoto(value) ? value : wordpressImage(value);
+}
+export function resolveAlbums(html: string | null): AlbumPhoto[] {
+  const managed = parseAlbums(html || "");
+  const $ = load(html || "");
+  if ($(`table[data-cgc-imports="${albumImportVersion}"]`).length)
+    return managed;
+  const existing = new Set(managed.map((photo) => photo.url));
+  return [
+    ...importedAlbumPhotos.filter((photo) => !existing.has(photo.url)),
+    ...managed,
+  ];
+}
 const escape = (value: string) =>
   value.replace(
     /[&<>"']/g,
@@ -16,7 +35,7 @@ const escape = (value: string) =>
       ]!,
   );
 export function albumTable(photos: AlbumPhoto[]) {
-  return `<table><thead><tr>${["Album", "Date", "Photo", "Caption", "Alt"].map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${photos.map((p) => `<tr>${[p.album, p.date, p.url, p.caption, p.alt].map((v) => `<td>${escape(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  return `<table data-cgc-imports="${albumImportVersion}"><thead><tr>${["Album", "Date", "Photo", "Caption", "Alt"].map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${photos.map((p) => `<tr>${[p.album, p.date, p.url, p.caption, p.alt].map((v) => `<td>${escape(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 export function parseAlbums(html: string): AlbumPhoto[] {
   const $ = load(html),
@@ -32,7 +51,7 @@ export function parseAlbums(html: string): AlbumPhoto[] {
       const cells = $(row).find("td"),
         get = (h: string) =>
           headers.includes(h) ? cells.eq(headers.indexOf(h)).text().trim() : "",
-        url = wordpressImage(get("Photo"));
+        url = albumImage(get("Photo"));
       if (url && get("Album") && get("Alt"))
         photos.push({
           album: get("Album"),

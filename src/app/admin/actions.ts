@@ -40,8 +40,7 @@ import { publishRecord } from "@/lib/admin/publish-service";
 import { saveFailure, type SaveResult } from "@/lib/admin/save-result";
 import { recordErrors } from "@/lib/admin/record-errors";
 import { publicationDate } from "@/lib/admin/scheduling";
-import { albumTable, type AlbumPhoto } from "@/lib/content/albums";
-import { wordpressImage } from "@/lib/content/flyer";
+import { albumImage, albumTable, type AlbumPhoto } from "@/lib/content/albums";
 import { restoreVersion, type Revision } from "@/lib/admin/revisions";
 import { saveAttendanceRecord } from "@/lib/admin/attendance";
 import { undoCouncilArchive } from "@/lib/admin/council-archive";
@@ -144,7 +143,7 @@ export async function saveAlbums(form: FormData): Promise<SaveResult> {
         return v.trim();
       };
       const album = get("album"),
-        url = wordpressImage(get("photo")),
+        url = albumImage(get("photo")),
         alt = get("alt"),
         date = get("date");
       if (!album || !url || !alt || (date && !validTermDate(date)))
